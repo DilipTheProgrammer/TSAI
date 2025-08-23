@@ -1,6 +1,6 @@
-# The School of AI
-Program Name: ERA V4
-Commencement Date: 16 Aug 2025
+# The School of AI  <br />
+Program Name: ERA V4 <br />
+Commencement Date: 16 Aug 2025 <br />
 
 ### ERA V4 Course Objectives
 
