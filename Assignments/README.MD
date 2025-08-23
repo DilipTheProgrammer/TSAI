@@ -100,7 +100,7 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 - **More complex feature:** Parts of Objects  
 - **Very complex feature:** Objects**  
 
-### Correct answer : *Starting Features = Edges and Gradients <br/> Slightly complex feature = Textures and Patterns <br/> More complex feature = Part of Objects <br/> Very complex feature = Objects*
+### Correct answer : <br/> *Starting Features = Edges and Gradients <br/> Slightly complex feature = Textures and Patterns <br/> More complex feature = Part of Objects <br/> Very complex feature = Objects*
 
 
 ---
