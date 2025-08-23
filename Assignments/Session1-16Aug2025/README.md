@@ -1,8 +1,8 @@
-## Session 1 — The School of AI  
+# TSAI Projects
 
----
+## Project 1 — The School of AI
 
-### Assignment 1A: Chrome Plugin Development using Cursor.ai  
+### Assignment 1A: Chrome Plugin Development using Cursor.ai
 
 #### Overview  
 In this session, we explore 1–2 examples of using Cursor to create Chrome Extensions. You are encouraged to get creative and build something unique!
@@ -32,41 +32,32 @@ _Remember:_
 
 ---
 
-### Assignment 1B: Quiz  
+## Assignment 1B: Quiz
 
----
-
-## Quiz Results  
-
+### Quiz Results  
 - **Score:** 50.33 out of 90  
 - **Submitted:** Aug 17 at 2:59 AM  
 - **Duration:** 9 minutes  
 
----
-
 ### Question 1 (10 pts)  
 **Select the odd one out:**  
 - Channel  
-- A 11x11 matrix that is used to slide or convolve on an image  
+- An 11x11 matrix that is used to slide or convolve on an image  
 - Kernel  
 - Feature Extractor  
 - A 3x3 matrix that is used to slide or convolve on an image  
 
 **Correct answer:** *Channel*  
 
----
-
 ### Question 2 (10 pts)  
 **What should be the receptive field of the kernels in the last layer?**  
-*(For text models: how many words should the last layer "see" to predict effectively?)*  
+_(For text models: how many words should the last layer "see" to predict effectively?)_  
 - 400x400  
 - Equal to the size of the image  
 - Equal to the size of the kernel  
 - ¯\\_(ツ)_/¯  
 
 **Correct answer:** *Equal to the size of the image*  
-
----
 
 ### Question 3 (10 pts)  
 **What should be the attention span of a transformer model, about to predict the next word?**  
@@ -77,8 +68,6 @@ _Remember:_
 
 **Correct answer:** *As long as the length of all the words encountered till now*  
 
----
-
 ### Question 4 (10 pts)  
 **What are channels?**  
 - Output of kernels  
@@ -87,8 +76,6 @@ _Remember:_
 - A collection of neurons that hold contextually similar information  
 
 **Correct answer:** *Output of kernels*  
-
----
 
 ### Question 5 (10 pts)  
 **I'm loving ERA V4 course!**  
@@ -99,35 +86,29 @@ _Remember:_
 **Correct answer:** *Whatever you feel*  
 _(Note: "Definitely True" was marked wrong 😀)_  
 
----
-
 ### Question 6 (10 pts)  
 **Match the following:**  
 
-| Feature Complexity      | Description           |
-|------------------------|----------------------|
-| Starting Features       | Edges and Gradients  |
-| Slightly complex feature| Textures and Patterns|
-| More complex feature    | Parts of Objects     |
-| Very complex feature    | Objects              |
+| Feature Complexity       | Description          |
+|-------------------------|---------------------|
+| Starting Features        | Edges and Gradients  |
+| Slightly complex feature | Textures and Patterns|
+| More complex feature     | Parts of Objects     |
+| Very complex feature     | Objects              |
 
-**Correct answer:** same as above  
-
----
+**Correct answer:** Same as above  
 
 ### Question 7 (10 pts)  
 **Match the following:**  
 
-| Feature Complexity      | Description           |
-|------------------------|----------------------|
-| Starting Features       | Characters            |
-| Slightly complex feature| Words                 |
-| More complex feature    | Sentences             |
-| Very complex feature    | Stories               |
+| Feature Complexity       | Description          |
+|-------------------------|---------------------|
+| Starting Features        | Characters           |
+| Slightly complex feature | Words                |
+| More complex feature     | Sentences            |
+| Very complex feature     | Stories              |
 
 **Correct answer:** *Same order*  
-
----
 
 ### Question 8 (10 pts)  
 **What determines how many features we should extract?**  
@@ -138,8 +119,6 @@ _(Note: "Definitely True" was marked wrong 😀)_
 - Depends on how rich we are (so we can afford better hardware)  
 
 **Correct answer:** *All of the above*  
-
----
 
 ### Question 9 (10 pts)  
 **Select the ones that are TRUE:**  
@@ -152,8 +131,6 @@ _(Note: "Definitely True" was marked wrong 😀)_
 - Receptive field of the last layer should be at least equal to the size of the image  
 - Total number of channels is determined by the total number of kernels in a CNN  
 - The attention span of a transformer NLP model must be equal to the complete length of the input  
-
----
 
 ### Question 10 (10 pts)  
 **Select the ones that are FALSE:**  
@@ -173,8 +150,6 @@ _(Note: "Definitely True" was marked wrong 😀)_
 
 # Additional Questions
 
----
-
 ## Q1. What are Channels and Kernels (according to EVA)?
 
 **Answer:**  
@@ -184,25 +159,19 @@ _(Note: "Definitely True" was marked wrong 😀)_
 - **Kernels:** Kernels are feature extractors that perform convolution over the image to extract features.  
   _Example:_ In the biryani example, the observer who differentiates peas, carrots, rice is the kernel.  
 
----
-
 ## Q2. Why should we only (mostly) use 3x3 Kernels?
 
 **Answer:**  
 - 3x3 kernels help build anything we want efficiently.  
-- Big companies like NVIDIA, INTEL, and AMD have hardware-accelerated 3x3 kernels.  
+- Big companies like NVIDIA, INTEL, and AMD hardware-accelerate 3x3 kernels.  
 - 3x3 kernels are odd-sized, providing symmetry with a center line, unlike even-sized kernels.  
 
----
-
-## Q3. How many times do we need to perform 3x3 convolution operation to reach 1x1 from 199x199?  
+## Q3. How many times do we need to perform 3x3 convolutions to reach 1x1 from 199x199?  
 
 **Answer:**  
 - 99 times  
 
 **Calculation:**  
-Starting from 199×199, each 3x3 convolution reduces the spatial dimension by 2 (one pixel from each side), so:
-
 1. 199x199 → 197x197  
 2. 197x197 → 195x195  
 3. 195x195 → 193x193  
