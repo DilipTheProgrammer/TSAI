@@ -71,7 +71,7 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 - Last word  
 - As long as the length of all the words encountered till now  
 - Half of the length of all the words encountered till now  
-### Correct answer: *  As long as the length of all the words encountered till now *
+### Correct answer: *  As long as the length of all the words encountered till now
 
 ---
 
@@ -81,7 +81,7 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 - Output of Fully connected layer  
 - Collection of Kernels  
 - A collection of neurons that hold contextually similar information  
-### Correct answer: *Output of kernels*
+### Correct answer: *Output of kernels
 ---
 
 
@@ -111,7 +111,7 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 - **Slightly complex feature:** Words  
 - **More complex feature:** Sentences  
 - **Very complex feature:** Stories  
-### Correct answer : Same
+### Correct answer : * Same order
 
 
 ---
@@ -123,7 +123,7 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 - How many features are actually there in the images/dataset  
 - Depends on how capable our deployment hardware it!  
 - Depends on how rich we are (so we can afford better hardware)  
-### Correct answer : All of the above
+### Correct answer : * All of the above
 ---
 
 
@@ -134,18 +134,18 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 - Total number of channels is determined by the total number of kernels in a convolutional neural network  
 - The attention span of a transformer NLP model must be equal to the complete length of the input  
 ### Correct answer  <br/> * Receptive field of the last layer should be atleast equal to the size of the image; <br/>
-  Total number of channels is determined by the total number of kernels in a convolutional neural network; <br/>
-  The attention span of a transformer NLP model must be equal to the complete length of the input; <br/>
+  * Total number of channels is determined by the total number of kernels in a convolutional neural network; <br/>
+  * The attention span of a transformer NLP model must be equal to the complete length of the input; <br/>
 ---
 
-### Wrong answer  
+
 #### Question 10 (10 pts)  
 **Select the ones that are False:**  
 - The 9 values we have in a 3x3 kernel are the values which our neural network needs to learn!  
 - When we convolve, we element-wise multiply the 9 values of the kernel with the 9 values of the image/channel, and then add them together to get a single value  
 - We use 3x3s because that is what is optimized for speed on most hardware  
 - We use 3x3 because 9 is the luckiest number in the world!  
-
+### Correct answer  <br/> : * We use 3x3 because 9 is the luckiest number in the world!
 ---
 
 **Quiz Score:** 50.33 out of 90
