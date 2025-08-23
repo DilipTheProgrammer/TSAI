@@ -30,7 +30,6 @@ _Remember:_
 ---
 
 ## Assignment 1B: Quiz
-
 ### Quiz Results  
 - **Score:** 50.33 out of 90  
 - **Submitted:** Aug 17 at 2:59 AM  
