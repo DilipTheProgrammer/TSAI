@@ -17,7 +17,8 @@ We don't use even-size kernels because they don’t have a central line and henc
 
 #### Q3. How many times do we need to perform 3x3 convolution operation to reach 1x1 from 199x199 (show calculations).
 
-Ans3. 99 time we need to perform convolution operation to reach 1X1.
+**Ans3.**
+99 time we need to perform convolution operation to reach 1X1.
 
 Calculation:
 1. 199x199 | 3x3 > 197x197
