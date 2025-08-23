@@ -4,6 +4,8 @@
 
 
 Objective for The School of AI ERA v4 Program: 
+| SNo. | Topics  | Details |
+| ---  | ---     | ---     |
 ### |1.| Real-World, Full-Scale LLM Training
 ### |2.| Training a 70B model end-to-end + instruction tuning with QAT and hands-on compute. 
 ### |3.| Practical CoreSet Focus - Not just learning about the right “datasets” - but learning CoreSet thinking, which is at the bleeding edge of data efficiency.
