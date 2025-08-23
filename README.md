@@ -1,9 +1,12 @@
-ERA-TheSchoolOfAI
-Python 3.9+ PyTorch 2.0+ torchvision 0.15+ torch-summary 1.4
+# ERA-TheSchoolOfAI
 
-The repository presents the assignments for all the sessions covered as part of the course ERA-V1, presented by SchoolOfAI and Rohan Shravan
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/release/python-397/) [![PyTorch 2.0+](https://img.shields.io/badge/PyTorch-2.0+-green.svg)](https://pytorch.org/) [![torchvision 0.15+](https://img.shields.io/badge/torchvision-0.15+-blue.svg)](https://pypi.org/project/torchvision/) [![torch-summary 1.4](https://img.shields.io/badge/torchsummary-1.4+-green.svg)](https://pypi.org/project/torch-summary/)
 
-Course Sessions
+
+The repository presents the assignments for all the sessions covered as part of the course ERA-V1, presented by [SchoolOfAI](https://theschoolof.ai/) and [Rohan Shravan](https://www.linkedin.com/in/rohanshravan/)
+
+### **Course Sessions**
+<hr/>
 
 
 
