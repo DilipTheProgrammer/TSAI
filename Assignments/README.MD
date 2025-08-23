@@ -41,14 +41,14 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 
 ---
 
-### Correct answer  
 #### Question 1 (10 pts)  
 **Select the odd one out**  
-- *Channel* 
+- Channel
 - a 11x11 matrix that is used to slide or convolve on an image  
 - Kernel  
 - Feature Extractor  
 - a 3x3 matrix that is used to slide or convolve on an image  
+### Correct answer : *Channel*
 
 ---
 
