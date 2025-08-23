@@ -1,3 +1,12 @@
+ERA-TheSchoolOfAI
+Python 3.9+ PyTorch 2.0+ torchvision 0.15+ torch-summary 1.4
+
+The repository presents the assignments for all the sessions covered as part of the course ERA-V1, presented by SchoolOfAI and Rohan Shravan
+
+Course Sessions
+
+
+
 # The School of AI  <br />
 Program Name: ERA V4 <br />
 Commencement Date: 16 Aug 2025 <br />
