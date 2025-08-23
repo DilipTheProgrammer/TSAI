@@ -5,9 +5,7 @@
 In this session, we explore 1–2 examples of using Cursor to create Chrome Extensions. You are encouraged to get creative and build something unique!
 
 #### Example Ideas  
-- Find and list the latest movies on Netflix  
-- Find the next Cricket Match or F1 Grand Prix  
-- Change the font on any website to your liking  
+- A plugin that reminds to take a break every few minutes 
 - Create a clipboard that stores all "copy" texts in your browser  
 - Develop a small web browser-based game  
 
