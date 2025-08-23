@@ -133,9 +133,9 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 - Receptive field of the last layer should be at least equal to the size of the image  
 - Total number of channels is determined by the total number of kernels in a convolutional neural network  
 - The attention span of a transformer NLP model must be equal to the complete length of the input  
-### Correct answer  <br/> *Receptive field of the last layer should be atleast equal to the size of the image; <br/>
-  *Total number of channels is determined by the total number of kernels in a convolutional neural network; <br/>
-  *The attention span of a transformer NLP model must be equal to the complete length of the input; <br/>
+### Correct answer  <br/> *Receptive field of the last layer should be atleast equal to the size of the image;* <br/>
+  *Total number of channels is determined by the total number of kernels in a convolutional neural network;* <br/>
+  *The attention span of a transformer NLP model must be equal to the complete length of the input;* <br/>
 ---
 
 
@@ -145,7 +145,7 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 - When we convolve, we element-wise multiply the 9 values of the kernel with the 9 values of the image/channel, and then add them together to get a single value  
 - We use 3x3s because that is what is optimized for speed on most hardware  
 - We use 3x3 because 9 is the luckiest number in the world!  
-### Correct answer  <br/> : * We use 3x3 because 9 is the luckiest number in the world!
+### Correct answer  <br/> : *We use 3x3 because 9 is the luckiest number in the world!*
 ---
 
 **Quiz Score:** 50.33 out of 90
