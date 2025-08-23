@@ -1,6 +1,4 @@
-# TSAI Projects
-
-## Project 1 — The School of AI
+## Session 1
 
 ### Assignment 1A: Chrome Plugin Development using Cursor.ai
 
