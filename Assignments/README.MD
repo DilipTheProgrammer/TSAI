@@ -111,7 +111,7 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 - **Slightly complex feature:** Words  
 - **More complex feature:** Sentences  
 - **Very complex feature:** Stories  
-### Correct answer : <br/> Same
+### Correct answer : Same
 
 
 ---
