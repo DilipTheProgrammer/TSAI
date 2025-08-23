@@ -98,7 +98,7 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 - **Starting Features:** Edges and Gradients  
 - **Slightly complex feature:** Texture and Patterns  
 - **More complex feature:** Parts of Objects  
-- **Very complex feature:** Objects**  
+- **Very complex feature:** Objects 
 
 ### Correct answer : <br/> *Starting Features = Edges and Gradients <br/> Slightly complex feature = Textures and Patterns <br/> More complex feature = Part of Objects <br/> Very complex feature = Objects*
 
@@ -111,9 +111,8 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 - **Slightly complex feature:** Words  
 - **More complex feature:** Sentences  
 - **Very complex feature:** Stories  
+### Correct answer : <br/> Same
 
- 
-Python, ChatGPT, Dictionary  
 
 ---
 
