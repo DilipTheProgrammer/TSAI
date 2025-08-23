@@ -6,13 +6,10 @@
 The repository presents the assignments for all the sessions covered as part of the course ERA-V4, presented by [SchoolOfAI](https://theschoolof.ai/) and [Rohan Shravan](https://www.linkedin.com/in/rohanshravan/)
 
 # **Course Details**
-<hr/>
-
-
-
 # The School of AI  <br />
 Program Name: ERA V4 <br />
 Commencement Date: 16 Aug 2025 <br />
+<hr/>
 
 ### ERA V4 Course Objectives
 
