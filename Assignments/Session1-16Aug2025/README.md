@@ -1,7 +1,4 @@
 ## Session 1
-<hr style="border: 3px solid black;" />
-
-
 ### Assignment 1A: Chrome Plugin Development using Cursor.ai
 
 #### Overview  
