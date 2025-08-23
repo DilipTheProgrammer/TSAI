@@ -1,8 +1,4 @@
-# TSAI Projects
-
----
-
-## Project 1 — The School of AI  
+## Session 1 — The School of AI  
 
 ---
 
