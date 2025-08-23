@@ -25,6 +25,20 @@ Commencement Date: 16 Aug 2025 <br />
 
 ### ERA V4 Program Session Plan
 
+### **Course Sessions**
+<hr/>
+
+- **Session 1-4** - Introduction to AI, NN, Dev tools, Python, Git/Uv, HTML, CSS, JS, AWS EC2 revisit
+- **Session 5** - 
+- **Session 6** - 
+- **Session 7** - 
+- **Session 8** - 
+- **Session 9** - 
+- **Session 10** -
+
+
+
+
 ### Session 1: Introduction to AI, Neural Networks and Development Tools
 - What is AI? Evolution and real-world applications.  
 - Neural Network fundamentals: perceptrons, activations, weights, bias.  
