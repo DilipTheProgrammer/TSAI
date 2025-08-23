@@ -16,7 +16,7 @@ Commencement Date: 16 Aug 2025 <br />
 
 ### ERA V4 Program Session Plan
 
-## Session 1: Introduction to AI, Neural Networks and Development Tools
+### Session 1: Introduction to AI, Neural Networks and Development Tools
 - What is AI? Evolution and real-world applications.  
 - Neural Network fundamentals: perceptrons, activations, weights, bias.  
 - Overview of course flow: how we go from scratch to training a 70B LLM.  
