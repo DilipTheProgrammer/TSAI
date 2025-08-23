@@ -4,10 +4,10 @@
 #### Overview  
 In this session, we explore 1–2 examples of using Cursor to create Chrome Extensions. You are encouraged to get creative and build something unique!
 
-#### Example Ideas  
-- A plugin that reminds to take a break every few minutes 
-- Create a clipboard that stores all "copy" texts in your browser  
-- Develop a small web browser-based game  
+#### Some Ideas to put together !
+- Plugin for health reminders - Blink, Hydrate, Stretch, Posture correction
+- Plugin for youtube playlist study planner - Calculate Total videos and their total duration, Generates study plan to download as txt, xls, calendar; 
+  
 
 #### Important Notes  
 - Limit development time to **no more than 1 hour** to avoid getting addicted  
