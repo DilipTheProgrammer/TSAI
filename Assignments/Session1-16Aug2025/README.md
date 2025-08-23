@@ -5,7 +5,7 @@
 In this session, we explore 1–2 examples of using Cursor to create Chrome Extensions. You are encouraged to get creative and build something unique!
 
 #### Some Ideas to put together !
-- Plugin for health reminders - Blink, Hydrate, Stretch, Posture correction
+- Plugin for health reminders - Blink, Hydrate, Stretch, Posture correction; Refer: https://www.makeuseof.com/tag/chrome-extensions-healthy-desk-job/
 - Plugin for youtube playlist study planner - Calculate Total videos and their total duration, Generates study plan to download as txt, xls, calendar; Refer: https://www.linkedin.com/posts/suman-d_aws-activity-7255255072983470080-CrpY and https://chromewebstore.google.com/detail/youtube-playlist-duration/pijbakhgmhhadeakaocjfockpndcpobk
 - 
   
