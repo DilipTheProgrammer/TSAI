@@ -31,3 +31,9 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 
 ---------------------------------------------------------------------------------------
 ### *Assignment 1B: Quiz*
+| Question 1 | 0 / 10 pts            | Select the odd one out                  |
+|------------|-----------------------|---------------------------------------|
+| Channel    |                       |                                       |
+|            | a 11x11 matrix that is used to slide or convolve on an image |   |
+| Kernel     |                       | Feature Extractor                     |
+|            | a 3x3 matrix that is used to slide or convolve on an image   |   |
