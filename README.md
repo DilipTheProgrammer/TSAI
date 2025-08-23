@@ -28,7 +28,10 @@ Commencement Date: 16 Aug 2025 <br />
 ### **Course Sessions**
 <hr/>
 
-- **Session 1-4** - Introduction to AI, NN, Dev tools, Python, Git/Uv, HTML, CSS, JS, AWS EC2 revisit
+- **Session 1** - Introduction to AI, NN, Dev tools
+- **Session 2** - Python Essentials, Version control using git/uv, Web Dev, Cloud AWS EC2 revisit
+- **Session 3** -
+- **Session 4** -
 - **Session 5** - 
 - **Session 6** - 
 - **Session 7** - 
