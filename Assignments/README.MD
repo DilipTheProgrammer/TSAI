@@ -81,7 +81,7 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 - Output of Fully connected layer  
 - Collection of Kernels  
 - A collection of neurons that hold contextually similar information  
-### Correct answer: *Output of kernels
+### Correct answer: *Output of kernels*
 ---
 
 
