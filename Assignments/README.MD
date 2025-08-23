@@ -138,6 +138,21 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
   *The attention span of a transformer NLP model must be equal to the complete length of the input;* <br/>
 ---
 
+#### Question 9 (10 pts)  
+**Select the ones that are TRUE:**  
+- Kernels and channels are the same things  
+- Receptive field of the last layer should be at least equal to the size of the image  
+- Total number of channels is determined by the total number of kernels in a convolutional neural network  
+- The attention span of a transformer NLP model must be equal to the complete length of the input  
+
+---
+
+### Correct Answers  
+- Receptive field of the last layer should be at least equal to the size of the image  
+- Total number of channels is determined by the total number of kernels in a convolutional neural network  
+- The attention span of a transformer NLP model must be equal to the complete length of the input  
+
+
 
 #### Question 10 (10 pts)  
 **Select the ones that are False:**  
