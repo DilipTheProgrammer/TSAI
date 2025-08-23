@@ -41,7 +41,7 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 
 ---
 
-### Wrong answer  
+### Correct answer  
 #### Question 1 (10 pts)  
 **Select the odd one out**  
 - *Channel* 
