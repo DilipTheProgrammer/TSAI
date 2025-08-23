@@ -1,8 +1,5 @@
-# TSAI Projects
----
-
 ### Assignment 1A: Chrome Plugin Development using Cursor.ai  
-
+---
 #### Overview  
 In this session, we explore 1–2 examples of using Cursor to create Chrome Extensions. We are encouraged to get creative and build something unique!  
 
