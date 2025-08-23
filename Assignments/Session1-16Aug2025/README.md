@@ -33,7 +33,8 @@ _Remember:_
 ### Quiz Results  
 - **Score:** 50.33 out of 90  
 - **Submitted:** Aug 17 at 2:59 AM  
-- **Duration:** 9 minutes  
+- **Duration:** 9 minutes
+----
 ### Question 1 (10 pts)  
 **Select the odd one out:**  
 - Channel  
