@@ -52,7 +52,7 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 
 ---
 
-### Correct answer  
+
 #### Question 2 (10 / 10 pts)  
 **What should be the receptive field of the kernels in the last layer?**  
 *(If we were talking about text, then this question would be, how many words of input shall the last layer "see" (or read/know of) to be able to predict/summarize or do anything productive)*  
@@ -60,6 +60,7 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 - Equal to the size of the image  
 - Equal to the size of the kernel  
 - ¯\\_(ツ)_/¯  
+### Correct answer : *Equal to the size of the image*
 
 ---
 
