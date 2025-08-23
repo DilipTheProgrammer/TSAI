@@ -2,18 +2,9 @@
 
 Project 1 for The School of AI
 ---------------------------------------------------------------------------------------
-## *Assignment 1A: Chrome Plugin*
-1. Horizontal Edge Detector
-2. 45 Degree Angle Detector (either) - Line along the diagonal will be boosted
-3. Blur Kernel -  Each pixel will be the average of the surrounding pixel
-4. Sharpen Kernel - When neighbouring pixel are different, pixel is boosted
-5. Identity function (doesn't do anything) - ignore the all the neighbouring pixels
-
-
-# Chrome Extension with Cussor Examples
-
-## Overview
-In this session, we explored 2 examples of using Cussor to create Chrome Extensions. You are encouraged to get creative and build something unique!
+## *Assignment 1A: Chrome Plugin development using Cursor.ai*
+### Overview
+In this session, we explor 1-2 examples of using Cussor to create Chrome Extensions. We are encouraged to get creative and build something unique!
 
 ## Example Ideas
 - Find and list the latest movies on Netflix
@@ -37,9 +28,6 @@ Sharing publicly puts healthy design and aesthetics pressure on you, as feedback
 _When you stop expecting appreciation and make yourself your own benchmark, the world will start appreciating._
 
 ---
-
-Feel free to reach out for any questions or support. Happy coding!
-
 
 ---------------------------------------------------------------------------------------
 ## *Assignment 1B: Quiz*
