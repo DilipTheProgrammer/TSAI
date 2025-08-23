@@ -111,7 +111,7 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 - **Slightly complex feature:** Words  
 - **More complex feature:** Sentences  
 - **Very complex feature:** Stories  
-### Correct answer : * Same order
+### Correct answer : *Same order*
 
 
 ---
@@ -123,7 +123,7 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 - How many features are actually there in the images/dataset  
 - Depends on how capable our deployment hardware it!  
 - Depends on how rich we are (so we can afford better hardware)  
-### Correct answer : * All of the above
+### Correct answer : *All of the above*
 ---
 
 
@@ -133,9 +133,9 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 - Receptive field of the last layer should be at least equal to the size of the image  
 - Total number of channels is determined by the total number of kernels in a convolutional neural network  
 - The attention span of a transformer NLP model must be equal to the complete length of the input  
-### Correct answer  <br/> * Receptive field of the last layer should be atleast equal to the size of the image; <br/>
-  * Total number of channels is determined by the total number of kernels in a convolutional neural network; <br/>
-  * The attention span of a transformer NLP model must be equal to the complete length of the input; <br/>
+### Correct answer  <br/> *Receptive field of the last layer should be atleast equal to the size of the image; <br/>
+  *Total number of channels is determined by the total number of kernels in a convolutional neural network; <br/>
+  *The attention span of a transformer NLP model must be equal to the complete length of the input; <br/>
 ---
 
 
