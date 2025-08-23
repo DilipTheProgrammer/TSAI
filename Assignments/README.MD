@@ -97,13 +97,11 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 **Match the following!**  
 - **Starting Features:** Edges and Gradients  
 - **Slightly complex feature:** Texture and Patterns  
-- **More complex feature:** Kernels  
-- **Part of Objects**  
-- **Very complex feature:** Channels  
-- **Objects**  
+- **More complex feature:** Parts of Objects  
+- **Very complex feature:** Objects**  
 
-*Other Incorrect Match Options:*  
-Game of Thrones, Money Heist, Kernels, Channels, Colors, Classes  
+### Correct answer : *Starting Features = Edges and Gradients <br/> Slightly complex feature = Textures and Patterns <br/> More complex feature = Part of Objects <br/> Very complex feature = Objects*
+
 
 ---
 
@@ -114,7 +112,6 @@ Game of Thrones, Money Heist, Kernels, Channels, Colors, Classes
 - **More complex feature:** Sentences  
 - **Very complex feature:** Stories  
 
-### Correct answer : *Starting Features = Edges and Gradients; Slightly complex feature = Textures and Patterns; More complex feature = Part of Objects; Very complex feature = Objects*
  
 Python, ChatGPT, Dictionary  
 
