@@ -31,9 +31,121 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 
 ---------------------------------------------------------------------------------------
 ### *Assignment 1B: Quiz*
-| Question 1 | 0 / 10 pts            | Select the odd one out                  |
-|------------|-----------------------|---------------------------------------|
-| Channel    |                       |                                       |
-|            | a 11x11 matrix that is used to slide or convolve on an image |   |
-| Kernel     |                       | Feature Extractor                     |
-|            | a 3x3 matrix that is used to slide or convolve on an image   |   |
+
+
+# Quiz Results
+
+**Score for this quiz:** 50.33 out of 90  
+**Submitted:** Aug 17 at 2:59am  
+**This attempt took:** 9 minutes
+
+---
+
+### Wrong answer  
+#### Question 1 (0 / 10 pts)  
+**Select the odd one out**  
+- Channel  
+- a 11x11 matrix that is used to slide or convolve on an image  
+- Kernel  
+- Feature Extractor  
+- a 3x3 matrix that is used to slide or convolve on an image  
+
+---
+
+### Correct answer  
+#### Question 2 (10 / 10 pts)  
+**What should be the receptive field of the kernels in the last layer?**  
+*(If we were talking about text, then this question would be, how many words of input shall the last layer "see" (or read/know of) to be able to predict/summarize or do anything productive)*  
+- 400x400  
+- Equal to the size of the image  
+- Equal to the size of the kernel  
+- ¯\\_(ツ)_/¯  
+
+---
+
+### Correct answer  
+#### Question 3 (10 / 10 pts)  
+**What should be the attention span of a transformer model, about to predict the next word?**  
+- Last few words  
+- Last word  
+- As long as the length of all the words encountered till now  
+- Half of the length of all the words encountered till now  
+
+---
+
+#### Question 4 (3.33 / 10 pts)  
+**What are channels?**  
+- Output of kernels  
+- Output of Fully connected layer  
+- Collection of Kernels  
+- A collection of neurons that hold contextually similar information  
+
+---
+
+### Wrong answer  
+#### Question 5 (0 / 0 pts)  
+**I'm loving ERA V4 course!**  
+- True 😀  
+- True 😀  
+- Definitely True 😀  
+
+---
+
+#### Question 6 (5 / 10 pts)  
+**Match the following!**  
+- **Starting Features:** Edges and Gradients  
+- **Slightly complex feature:** Texture and Patterns  
+- **More complex feature:** Kernels  
+- **Part of Objects**  
+- **Very complex feature:** Channels  
+- **Objects**  
+
+*Other Incorrect Match Options:*  
+Game of Thrones, Money Heist, Kernels, Channels, Colors, Classes  
+
+---
+
+### Correct answer  
+#### Question 7 (10 / 10 pts)  
+**Match the Following**  
+- **Starting Features:** Characters  
+- **Slightly complex feature:** Words  
+- **More complex feature:** Sentences  
+- **Very complex feature:** Stories  
+
+*Other Incorrect Match Options:*  
+Python, ChatGPT, Dictionary  
+
+---
+
+#### Question 8 (2 / 10 pts)  
+**What determines how many features we should extract?**  
+- Depends on how capable our training hardware is!  
+- Depends on how varied our dataset and problem statement is!  
+- How many features are actually there in the images/dataset  
+- Depends on how capable our deployment hardware it!  
+- Depends on how rich we are (so we can afford better hardware)  
+
+---
+
+### Correct answer  
+#### Question 9 (10 / 10 pts)  
+**Select the ones that are TRUE:**  
+- Kernels and channels are the same things  
+- Receptive field of the last layer should be at least equal to the size of the image  
+- Total number of channels is determined by the total number of kernels in a convolutional neural network  
+- The attention span of a transformer NLP model must be equal to the complete length of the input  
+
+---
+
+### Wrong answer  
+#### Question 10 (0 / 10 pts)  
+**Select the ones that are False:**  
+- The 9 values we have in a 3x3 kernel are the values which our neural network needs to learn!  
+- When we convolve, we element-wise multiply the 9 values of the kernel with the 9 values of the image/channel, and then add them together to get a single value  
+- We use 3x3s because that is what is optimized for speed on most hardware  
+- We use 3x3 because 9 is the luckiest number in the world!  
+
+---
+
+**Quiz Score:** 50.33 out of 90
