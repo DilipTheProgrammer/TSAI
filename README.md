@@ -4,9 +4,9 @@
 
 
 Objective for The School of AI ERA v4 Program: 
-### Real-World, Full-Scale LLM Training
-### Training a 70B model end-to-end + instruction tuning with QAT and hands-on compute. 
-### Practical CoreSet Focus - Not just learning about the right “datasets” - but learning CoreSet thinking, which is at the bleeding edge of data efficiency.
+### |1.| Real-World, Full-Scale LLM Training
+### |2.| Training a 70B model end-to-end + instruction tuning with QAT and hands-on compute. 
+### |3.| Practical CoreSet Focus - Not just learning about the right “datasets” - but learning CoreSet thinking, which is at the bleeding edge of data efficiency.
 ### Multi-GPU ImageNet Training - Training from scratch on full ImageNet with real training and deployment experience.
 ### Quantization Aware Training (QAT) Covering full QAT, not just LoRA/PEFT, as a massive differentiator - real engineering, not shortcuts. Laying foundations to train a 100B+ parameter model!!
 ### Balanced Inclusion of RL + VLMs + Embeddings
