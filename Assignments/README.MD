@@ -139,7 +139,7 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 - Total number of channels is determined by the total number of kernels in a convolutional neural network  
 - The attention span of a transformer NLP model must be equal to the complete length of the input  
 
-
+---
 
 #### Question 10 (10 pts)  
 **Select the ones that are False:**  
