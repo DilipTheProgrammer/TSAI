@@ -48,7 +48,7 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 - Kernel  
 - Feature Extractor  
 - a 3x3 matrix that is used to slide or convolve on an image  
-### Correct answer : *Channel
+### Correct answer : * Channel
 
 ---
 
@@ -60,7 +60,7 @@ _When you stop expecting appreciation and make yourself your own benchmark, the 
 - Equal to the size of the image  
 - Equal to the size of the kernel  
 - ¯\\_(ツ)_/¯  
-### Correct answer : *Equal to the size of the image
+### Correct answer : * Equal to the size of the image
 
 ---
 
