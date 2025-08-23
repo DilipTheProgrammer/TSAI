@@ -139,7 +139,6 @@ _(Note: "Definitely True" was marked wrong 😀)_
 
 **Correct answer:** *We use 3x3 because 9 is the luckiest number in the world!*  
 
----
 
 ## Final Quiz Score  
 **50.33 out of 90**  
@@ -269,3 +268,4 @@ _(Note: "Definitely True" was marked wrong 😀)_
 97. 7x7 → 5x5  
 98. 5x5 → 3x3  
 99. 3x3 → 1x1  
+---
