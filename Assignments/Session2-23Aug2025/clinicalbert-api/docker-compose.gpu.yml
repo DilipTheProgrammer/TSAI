@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  # GPU-enabled ClinicalBERT API
+  clinicalbert-api-gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: gpu-base
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - CUDA_VISIBLE_DEVICES=0
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - SECRET_KEY=${SECRET_KEY}
+    volumes:
+      - ./models:/app/models
+      - ./logs:/app/logs
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    networks:
+      - clinicalbert-network
+    restart: unless-stopped
+
+networks:
+  clinicalbert-network:
+    driver: bridge

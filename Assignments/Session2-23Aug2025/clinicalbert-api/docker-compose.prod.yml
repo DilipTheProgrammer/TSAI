@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # Production ClinicalBERT API
+  clinicalbert-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - FHIR_BASE_URL=${FHIR_BASE_URL}
+      - SECRET_KEY=${SECRET_KEY}
+      - SMART_CLIENT_ID=${SMART_CLIENT_ID}
+      - SMART_CLIENT_SECRET=${SMART_CLIENT_SECRET}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - LOG_LEVEL=INFO
+      - ENABLE_AUDIT_LOGGING=true
+      - FORCE_HTTPS=true
+    volumes:
+      - ./models:/app/models:ro
+      - ./logs:/app/logs
+      - ./data:/app/data
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    networks:
+      - clinicalbert-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Production Nginx with SSL
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./logs/nginx:/var/log/nginx
+    depends_on:
+      - clinicalbert-api
+    networks:
+      - clinicalbert-network
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    restart: unless-stopped
+
+networks:
+  clinicalbert-network:
+    driver: overlay
+    attachable: true
