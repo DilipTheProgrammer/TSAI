@@ -1,0 +1,107 @@
+﻿name: Deploy FastAPI to EC2 (systemd, no TLS)
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout (for $GITHUB_REPOSITORY info)
+        uses: actions/checkout@v4
+
+      - name: Start SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Add EC2 to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Remote deploy
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_APP_DIR: ${{ secrets.EC2_APP_DIR }}
+          BRANCH: ${{ vars.DEPLOY_BRANCH || 'main' }}
+        run: |
+          ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
+          set -euxo pipefail
+
+          # --- Base packages (Ubuntu) ---
+          sudo apt-get update -y
+          sudo apt-get install -y python3-pip python3-venv git nginx
+
+          # --- App directory + code sync ---
+          mkdir -p ${EC2_APP_DIR}
+          cd ${EC2_APP_DIR}
+
+          if [ -d .git ]; then
+            git fetch --all
+            git reset --hard origin/${BRANCH}
+          else
+            git init
+            git remote add origin https://github.com/${GITHUB_REPOSITORY}.git
+            git fetch origin ${BRANCH}
+            git checkout -b ${BRANCH} FETCH_HEAD
+          fi
+
+          # --- Python environment ---
+          python3 -m venv .venv
+          . .venv/bin/activate
+          pip install --upgrade pip wheel
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          elif [ -f pyproject.toml ]; then
+            pip install .
+          fi
+
+          # --- systemd service (runs uvicorn main:app on 127.0.0.1:8001) ---
+          sudo tee /etc/systemd/system/fastapi.service >/dev/null << UNIT
+          [Unit]
+          Description=FastAPI (Uvicorn)
+          After=network.target
+
+          [Service]
+          User=${USER}
+          WorkingDirectory=${EC2_APP_DIR}
+          Environment="PATH=${EC2_APP_DIR}/.venv/bin"
+          EnvironmentFile=-${EC2_APP_DIR}/.env
+          ExecStart=${EC2_APP_DIR}/.venv/bin/uvicorn main:app --host 127.0.0.1 --port 8001 --workers 2
+          Restart=always
+          RestartSec=5
+
+          [Install]
+          WantedBy=multi-user.target
+          UNIT
+
+          sudo systemctl daemon-reload
+          sudo systemctl enable fastapi || true
+          sudo systemctl restart fastapi
+
+          # --- Nginx reverse proxy (HTTP only, no domain/TLS) ---
+          sudo tee /etc/nginx/sites-available/fastapi >/dev/null << 'NGINX'
+          server {
+              listen 80;
+              server_name _;
+
+              location / {
+                  proxy_pass http://127.0.0.1:8001;
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+              }
+          }
+          NGINX
+          sudo ln -sf /etc/nginx/sites-available/fastapi /etc/nginx/sites-enabled/fastapi
+          sudo nginx -t && sudo systemctl restart nginx
+
+          # --- Basic cleanups/log hints ---
+          sudo systemctl status fastapi --no-pager || true
+          EOF
