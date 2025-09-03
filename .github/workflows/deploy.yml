@@ -3,6 +3,8 @@
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'Assignments/Session2-23Aug2025/clinicalbert-api/**'
   workflow_dispatch:
 
 jobs:
