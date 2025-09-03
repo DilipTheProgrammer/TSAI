@@ -157,7 +157,7 @@ make migrate
 
 For issues and support:
 1. Check the [troubleshooting guide](docs/troubleshooting.md)
-2. Review [API documentation](http://your-domain.com/docs)
+2. Review [API documentation](www.google.com)
 3. Contact support at support@your-org.com
 
 ## License
