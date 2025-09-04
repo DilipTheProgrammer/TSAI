@@ -1,6 +1,6 @@
 """FHIR R4 Schema definitions and Pydantic models"""
 
-from typing import Optional, List, Dict, Any, Union
+from typing import Optional, List, Dict, Any, Union, Literal
 from pydantic import BaseModel, Field, validator
 from datetime import datetime
 from enum import Enum
@@ -87,7 +87,7 @@ class Attachment(BaseModel):
 # Resource Models
 class DocumentReference(BaseModel):
     """FHIR DocumentReference Resource"""
-    resourceType: str = Field(default="DocumentReference", const=True)
+    resourceType: Literal["DocumentReference"] = Field(default="DocumentReference")
     id: Optional[str] = None
     status: str = Field(..., description="current | superseded | entered-in-error")
     type: Optional[CodeableConcept] = None
@@ -109,7 +109,7 @@ class DocumentReference(BaseModel):
 
 class Observation(BaseModel):
     """FHIR Observation Resource"""
-    resourceType: str = Field(default="Observation", const=True)
+    resourceType: Literal["Observation"] = Field(default="Observation")
     id: Optional[str] = None
     status: ObservationStatus = Field(..., description="Observation status")
     category: Optional[List[CodeableConcept]] = None
@@ -140,7 +140,7 @@ class Observation(BaseModel):
 
 class Condition(BaseModel):
     """FHIR Condition Resource"""
-    resourceType: str = Field(default="Condition", const=True)
+    resourceType: Literal["Condition"] = Field(default="Condition")
     id: Optional[str] = None
     clinicalStatus: Optional[CodeableConcept] = None
     verificationStatus: Optional[CodeableConcept] = None
@@ -177,7 +177,7 @@ class BundleEntry(BaseModel):
 
 class Bundle(BaseModel):
     """FHIR Bundle Resource"""
-    resourceType: str = Field(default="Bundle", const=True)
+    resourceType: Literal["Bundle"] = Field(default="Bundle")
     id: Optional[str] = None
     type: BundleType = Field(..., description="Bundle type")
     timestamp: Optional[datetime] = None
