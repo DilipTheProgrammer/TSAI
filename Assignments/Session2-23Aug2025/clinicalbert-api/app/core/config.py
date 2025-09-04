@@ -1,6 +1,7 @@
 """Application configuration settings"""
 
 from pydantic_settings import BaseSettings
+from pydantic import ConfigDict
 from typing import List, Optional
 import os
 
@@ -89,9 +90,10 @@ class Settings(BaseSettings):
     MAX_REQUESTS: int = 1000
     TIMEOUT: int = 30
     
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    model_config = ConfigDict(
+        env_file=".env",
+        case_sensitive=True
+    )
 
 # Global settings instance
 settings = Settings()
