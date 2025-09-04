@@ -11,7 +11,7 @@ from app.schemas.fhir_schemas import (
     PredictionRequest, EntityExtractionResponse, TextInput, FHIRInput
 )
 from app.core.security import get_current_user
-from main import get_clinical_bert_model
+from app.dependencies import get_clinical_bert_model
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
