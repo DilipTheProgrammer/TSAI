@@ -59,7 +59,9 @@ jobs:
 
           # venv + deps
           python3 -m venv "${APP_PATH}/.venv"
-          "${APP_PATH}/.venv/bin/python" -m pip install --upgrade pip setuptools wheel
+          # Upgrade pip, setuptools, and wheel first to avoid Python 3.12 compatibility issues
+          "${APP_PATH}/.venv/bin/python" -m pip install --upgrade pip>=23.3
+          "${APP_PATH}/.venv/bin/python" -m pip install --upgrade setuptools>=69.0.0 wheel>=0.42.0
 
           REQ="${APP_PATH}/requirements.txt"
 
