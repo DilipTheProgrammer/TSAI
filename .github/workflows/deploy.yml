@@ -39,8 +39,13 @@ jobs:
             "EC2_APP_DIR='${EC2_APP_DIR}' APP_SUBDIR='${APP_SUBDIR}' BRANCH='${BRANCH}' GITHUB_REPOSITORY='${GITHUB_REPOSITORY}' ENTRY='${ENTRY}' bash -s" <<'EOF'
           set -euxo pipefail
 
+          # --- Base packages ---
           sudo apt-get update -y
-          sudo apt-get install -y python3-pip python3-venv git nginx
+          sudo apt-get install -y python3-venv python3-pip git nginx curl || true
+
+          # Provide distutils to any legacy build backend that still expects it (Py3.12 removed stdlib distutils)
+          sudo apt-get install -y python3.12-distutils || sudo apt-get install -y python3-distutils || true
+
 
           mkdir -p "${EC2_APP_DIR}"
           cd "${EC2_APP_DIR}"
@@ -59,58 +64,34 @@ jobs:
 
           # venv + deps
           python3 -m venv "${APP_PATH}/.venv"
-          export PIP_NO_BUILD_ISOLATION=false
-          export SETUPTOOLS_USE_DISTUTILS=stdlib
-          export PIP_DISABLE_PIP_VERSION_CHECK=1
-          export PYTHONPATH="${APP_PATH}/.venv/lib/python3.12/site-packages"
           
-          "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall pip>=24.0
-          "${APP_PATH}/.venv/bin/python" -m pip install --no-cache-dir --only-binary=:all: "setuptools-distutils>=1.0.0" || \
-          "${APP_PATH}/.venv/bin/python" -m pip install --no-cache-dir --only-binary=:all: "distlib>=0.3.8"
-          "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall setuptools>=70.0.0
-          "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall wheel>=0.43.0
-          "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall "importlib-metadata>=7.0.0"
-          "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall "packaging>=24.0"
+          # Critical env vars to keep legacy sdists from reaching for stdlib distutils
+          export SETUPTOOLS_USE_DISTUTILS=local
+          export PIP_PREFER_BINARY=1
+          export PIP_ONLY_BINARY=:all:
 
+          # --- OPTIONAL: if you did NOT edit requirements in repo, uncomment this patch block ---
+          # sed -i 's/^torch==2\.1\.0$/torch==2.4.1/' "$REQ" || true
+          # sed -i 's/^numpy==1\.24\.3$/numpy==1.26.4/' "$REQ" || true
+          # sed -i 's/^scikit-learn==1\.3\.0$/scikit-learn==1.4.2/' "$REQ" || true
+          # sed -i 's/^faiss-cpu==1\.7\.4$/faiss-cpu==1.8.0/' "$REQ" || true
+          # sed -i 's/^tokenizers==0\.15\.0$/tokenizers==0.15.2/' "$REQ" || true
+          # sed -i 's/^transformers==4\.35\.0$/transformers==4.39.3/' "$REQ" || true
+          # if grep -Eq '^[[:space:]]*psycopg2([<=>]|$)' "$REQ"; then
+          #   sed -i -E 's/^[[:space:]]*psycopg2([<=>].*)?$/psycopg2-binary==2.9.9/' "$REQ"
+          # fi
 
-          REQ="${APP_PATH}/requirements.txt"
+          # --- Install torch from CPU wheel index (no CUDA on free-tier) ---
+          "${APP_PATH}/.venv/bin/pip" install --no-cache-dir --index-url https://download.pytorch.org/whl/cpu "torch==2.4.1"
 
-          # ---- Patch only the pins that lack Py3.12 wheels ----
-          # torch 2.1.0 -> 2.4.1 (CPU wheels exist)
-          sed -i 's/^torch==2\.1\.0$/torch==2.4.1/' "$REQ" || true
-          # numpy 1.24.3 -> 1.26.4
-          sed -i 's/^numpy==1\.24\.3$/numpy==1.26.4/' "$REQ" || true
-          # scikit-learn 1.3.0 -> 1.4.2
-          sed -i 's/^scikit-learn==1\.3\.0$/scikit-learn==1.4.2/' "$REQ" || true
-          # faiss-cpu 1.7.4 -> 1.8.0
-          sed -i 's/^faiss-cpu==1\.7\.4$/faiss-cpu==1.8.0/' "$REQ" || true
-          # tokenizers 0.15.0 -> 0.15.2
-          sed -i 's/^tokenizers==0\.15\.0$/tokenizers==0.15.2/' "$REQ" || true
-          sed -i 's/^datasets==2\.15\.0$/datasets==2.19.0/' "$REQ" || true
-          sed -i 's/^accelerate==0\.25\.0$/accelerate==0.30.0/' "$REQ" || true
+          # --- Install all remaining deps using wheels-only ---
+          if ! "${APP_PATH}/.venv/bin/pip" install --no-cache-dir --prefer-binary --only-binary=:all: -r "${REQ}"; then
+            echo "== Wheels-only install failed. Showing verbose offender (likely lacks cp312 wheel) =="
+            "${APP_PATH}/.venv/bin/pip" install -v --prefer-binary --only-binary=:all: -r "${REQ}" || true
 
-          # Install torch first from CPU wheels, then the rest (avoid source builds)
-          if grep -q '^torch' "$REQ"; then
-            TORCH_VER="$(grep '^torch' "$REQ" | head -n1 | awk -F'==' '{print $2}')"
-            echo "Installing PyTorch ${TORCH_VER} with CPU wheels..."
-            "${APP_PATH}/.venv/bin/pip" install --no-cache-dir --index-url https://download.pytorch.org/whl/cpu "torch==${TORCH_VER}"
-            
-            # Install other ML packages that might need special handling
-            if grep -q '^numpy' "$REQ"; then
-              NUMPY_VER="$(grep '^numpy' "$REQ" | head -n1 | awk -F'==' '{print $2}')"
-              "${APP_PATH}/.venv/bin/pip" install --no-cache-dir "numpy==${NUMPY_VER}"
-            fi
-            
-            if grep -q '^scikit-learn' "$REQ"; then
-              SKLEARN_VER="$(grep '^scikit-learn' "$REQ" | head -n1 | awk -F'==' '{print $2}')"
-              "${APP_PATH}/.venv/bin/pip" install --no-cache-dir "scikit-learn==${SKLEARN_VER}"
-            fi
-            
-            # Create filtered requirements without torch, numpy, scikit-learn
-            grep -v -E '^(torch|numpy|scikit-learn)' "$REQ" > /tmp/req-filtered.txt
-            "${APP_PATH}/.venv/bin/pip" install --no-cache-dir -r /tmp/req-filtered.txt
-          else
-            "${APP_PATH}/.venv/bin/pip" install --no-cache-dir -r "$REQ"
+            # If the offender is faiss-cpu on your architecture, you can uncomment this fallback:
+            # sed -i '/^faiss-cpu/d' "${REQ}"
+            # "${APP_PATH}/.venv/bin/pip" install --no-cache-dir --prefer-binary --only-binary=:all: -r "${REQ}"
           fi
 
           # systemd unit (service name: fastapi)
