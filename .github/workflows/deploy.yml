@@ -74,13 +74,29 @@ jobs:
           sed -i 's/^faiss-cpu==1\.7\.4$/faiss-cpu==1.8.0/' "$REQ" || true
           # tokenizers 0.15.0 -> 0.15.2
           sed -i 's/^tokenizers==0\.15\.0$/tokenizers==0.15.2/' "$REQ" || true
+          sed -i 's/^datasets==2\.15\.0$/datasets==2.19.0/' "$REQ" || true
+          sed -i 's/^accelerate==0\.25\.0$/accelerate==0.30.0/' "$REQ" || true
 
           # Install torch first from CPU wheels, then the rest (avoid source builds)
           if grep -q '^torch' "$REQ"; then
             TORCH_VER="$(grep '^torch' "$REQ" | head -n1 | awk -F'==' '{print $2}')"
+            echo "Installing PyTorch ${TORCH_VER} with CPU wheels..."
             "${APP_PATH}/.venv/bin/pip" install --no-cache-dir --index-url https://download.pytorch.org/whl/cpu "torch==${TORCH_VER}"
-            grep -v '^torch' "$REQ" > /tmp/req-notorch.txt
-            "${APP_PATH}/.venv/bin/pip" install --no-cache-dir -r /tmp/req-notorch.txt
+            
+            # Install other ML packages that might need special handling
+            if grep -q '^numpy' "$REQ"; then
+              NUMPY_VER="$(grep '^numpy' "$REQ" | head -n1 | awk -F'==' '{print $2}')"
+              "${APP_PATH}/.venv/bin/pip" install --no-cache-dir "numpy==${NUMPY_VER}"
+            fi
+            
+            if grep -q '^scikit-learn' "$REQ"; then
+              SKLEARN_VER="$(grep '^scikit-learn' "$REQ" | head -n1 | awk -F'==' '{print $2}')"
+              "${APP_PATH}/.venv/bin/pip" install --no-cache-dir "scikit-learn==${SKLEARN_VER}"
+            fi
+            
+            # Create filtered requirements without torch, numpy, scikit-learn
+            grep -v -E '^(torch|numpy|scikit-learn)' "$REQ" > /tmp/req-filtered.txt
+            "${APP_PATH}/.venv/bin/pip" install --no-cache-dir -r /tmp/req-filtered.txt
           else
             "${APP_PATH}/.venv/bin/pip" install --no-cache-dir -r "$REQ"
           fi
@@ -132,13 +148,18 @@ jobs:
         env:
           URL: ${{ format('http://{0}/docs', secrets.EC2_HOST) }}
         run: |
+          echo "Testing deployment at: $URL"
           for i in {1..30}; do
             code=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
             if [ "$code" -ge 200 ] && [ "$code" -lt 400 ]; then
-              echo "### Deployment OK" >> $GITHUB_STEP_SUMMARY
-              echo "- /docs reachable" >> $GITHUB_STEP_SUMMARY
+              echo "### ✅ Deployment Successful" >> $GITHUB_STEP_SUMMARY
+              echo "- FastAPI docs accessible at: $URL" >> $GITHUB_STEP_SUMMARY
+              echo "- HTTP status: $code" >> $GITHUB_STEP_SUMMARY
               exit 0
             fi
+            echo "Attempt $i: HTTP $code, retrying..."
             sleep 2
           done
-          exit 1      
+          echo "### ❌ Deployment Failed" >> $GITHUB_STEP_SUMMARY
+          echo "- Could not reach $URL after 60 seconds" >> $GITHUB_STEP_SUMMARY
+          exit 1    
