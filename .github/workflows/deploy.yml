@@ -67,6 +67,7 @@ jobs:
           "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall pip>=24.0
           "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall setuptools>=70.0.0
           "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall wheel>=0.43.0
+          "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall "setuptools[distutils]>=70.0.0"
           "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall "importlib-metadata>=7.0.0"
           "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall "packaging>=24.0"
 
