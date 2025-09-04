@@ -39,13 +39,10 @@ jobs:
             "EC2_APP_DIR='${EC2_APP_DIR}' APP_SUBDIR='${APP_SUBDIR}' BRANCH='${BRANCH}' GITHUB_REPOSITORY='${GITHUB_REPOSITORY}' ENTRY='${ENTRY}' bash -s" <<'EOF'
           set -euxo pipefail
 
+          
           # --- Base packages ---
           sudo apt-get update -y
-          sudo apt-get install -y python3-venv python3-pip git nginx curl || true
-
-          # Provide distutils to any legacy build backend that still expects it (Py3.12 removed stdlib distutils)
-          sudo apt-get install -y python3.12-distutils || sudo apt-get install -y python3-distutils || true
-
+          sudo apt-get install -y python3-venv python3-pip git nginx curl
 
           mkdir -p "${EC2_APP_DIR}"
           cd "${EC2_APP_DIR}"
@@ -61,10 +58,18 @@ jobs:
           fi
 
           APP_PATH="${EC2_APP_DIR}/${APP_SUBDIR}"
+          REQ="${APP_PATH}/requirements.txt"
+          if [ ! -f "$REQ" ]; then
+            echo "requirements.txt not found at: $REQ"
+            ls -la "${APP_PATH}"
+            exit 1
+          fi
+          echo "Using requirements at: $REQ"
 
           # venv + deps
           python3 -m venv "${APP_PATH}/.venv"
-          
+          "${APP_PATH}/.venv/bin/python" -m pip install --upgrade pip setuptools wheel
+
           # Critical env vars to keep legacy sdists from reaching for stdlib distutils
           export SETUPTOOLS_USE_DISTUTILS=local
           export PIP_PREFER_BINARY=1
@@ -91,7 +96,12 @@ jobs:
 
             # If the offender is faiss-cpu on your architecture, you can uncomment this fallback:
             # sed -i '/^faiss-cpu/d' "${REQ}"
-            # "${APP_PATH}/.venv/bin/pip" install --no-cache-dir --prefer-binary --only-binary=:all: -r "${REQ}"
+            if grep -q '^faiss-cpu' "$REQ"; then
+              sed -i '/^faiss-cpu/d' "$REQ"
+              "${APP_PATH}/.venv/bin/pip" install --no-cache-dir --prefer-binary --only-binary=:all: -r "$REQ"
+            else
+              exit 1
+            fi
           fi
 
           # systemd unit (service name: fastapi)
