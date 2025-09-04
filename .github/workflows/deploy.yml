@@ -58,9 +58,32 @@ jobs:
           APP_PATH="${EC2_APP_DIR}/${APP_SUBDIR}"
 
           # venv + deps
-           python3.10 -m venv "${APP_PATH}/.venv"
+          python3 -m venv "${APP_PATH}/.venv"
           "${APP_PATH}/.venv/bin/python" -m pip install --upgrade pip setuptools wheel
-          "${APP_PATH}/.venv/bin/pip" install --no-cache-dir -r "${APP_PATH}/requirements.txt"
+
+          REQ="${APP_PATH}/requirements.txt"
+
+          # ---- Patch only the pins that lack Py3.12 wheels ----
+          # torch 2.1.0 -> 2.4.1 (CPU wheels exist)
+          sed -i 's/^torch==2\.1\.0$/torch==2.4.1/' "$REQ" || true
+          # numpy 1.24.3 -> 1.26.4
+          sed -i 's/^numpy==1\.24\.3$/numpy==1.26.4/' "$REQ" || true
+          # scikit-learn 1.3.0 -> 1.4.2
+          sed -i 's/^scikit-learn==1\.3\.0$/scikit-learn==1.4.2/' "$REQ" || true
+          # faiss-cpu 1.7.4 -> 1.8.0
+          sed -i 's/^faiss-cpu==1\.7\.4$/faiss-cpu==1.8.0/' "$REQ" || true
+          # tokenizers 0.15.0 -> 0.15.2
+          sed -i 's/^tokenizers==0\.15\.0$/tokenizers==0.15.2/' "$REQ" || true
+
+          # Install torch first from CPU wheels, then the rest (avoid source builds)
+          if grep -q '^torch' "$REQ"; then
+            TORCH_VER="$(grep '^torch' "$REQ" | head -n1 | awk -F'==' '{print $2}')"
+            "${APP_PATH}/.venv/bin/pip" install --no-cache-dir --index-url https://download.pytorch.org/whl/cpu "torch==${TORCH_VER}"
+            grep -v '^torch' "$REQ" > /tmp/req-notorch.txt
+            "${APP_PATH}/.venv/bin/pip" install --no-cache-dir -r /tmp/req-notorch.txt
+          else
+            "${APP_PATH}/.venv/bin/pip" install --no-cache-dir -r "$REQ"
+          fi
 
           # systemd unit (service name: fastapi)
           sudo tee /etc/systemd/system/fastapi.service >/dev/null <<UNIT
