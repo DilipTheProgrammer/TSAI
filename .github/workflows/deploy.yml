@@ -59,9 +59,17 @@ jobs:
 
           # venv + deps
           python3 -m venv "${APP_PATH}/.venv"
-          # Upgrade pip, setuptools, and wheel first to avoid Python 3.12 compatibility issues
-          "${APP_PATH}/.venv/bin/python" -m pip install --upgrade pip>=23.3
-          "${APP_PATH}/.venv/bin/python" -m pip install --upgrade setuptools>=69.0.0 wheel>=0.42.0
+          export PIP_NO_BUILD_ISOLATION=false
+          export SETUPTOOLS_USE_DISTUTILS=stdlib
+          export PIP_DISABLE_PIP_VERSION_CHECK=1
+          export PYTHONPATH="${APP_PATH}/.venv/lib/python3.12/site-packages"
+          
+          "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall pip>=24.0
+          "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall setuptools>=70.0.0
+          "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall wheel>=0.43.0
+          "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall "importlib-metadata>=7.0.0"
+          "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall "packaging>=24.0"
+
 
           REQ="${APP_PATH}/requirements.txt"
 
