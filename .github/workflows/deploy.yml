@@ -65,7 +65,8 @@ jobs:
           export PYTHONPATH="${APP_PATH}/.venv/lib/python3.12/site-packages"
           
           "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall pip>=24.0
-          "${APP_PATH}/.venv/bin/python" -m pip install --no-cache-dir --only-binary=:all: distlib>=0.3.8
+          "${APP_PATH}/.venv/bin/python" -m pip install --no-cache-dir --only-binary=:all: "setuptools-distutils>=1.0.0" || \
+          "${APP_PATH}/.venv/bin/python" -m pip install --no-cache-dir --only-binary=:all: "distlib>=0.3.8"
           "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall setuptools>=70.0.0
           "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall wheel>=0.43.0
           "${APP_PATH}/.venv/bin/python" -m pip install --upgrade --force-reinstall "importlib-metadata>=7.0.0"
