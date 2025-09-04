@@ -1,4 +1,4 @@
-﻿name: Deploy FastAPI to EC2 (systemd, no TLS)
+name: Deploy FastAPI to EC2 (systemd, no TLS)
 
 on:
   push:
@@ -24,70 +24,61 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-
-      - name: Remote deploy
+      - name: Remote deploy (systemd + nginx)
         env:
-          EC2_HOST: ${{ secrets.EC2_HOST }}
-          EC2_USER: ${{ secrets.EC2_USER }}
-          EC2_APP_DIR: ${{ secrets.EC2_APP_DIR }}
-          APP_SUBDIR: Assignments/Session2-23Aug2025/clinicalbert-api
-          BRANCH: ${{ vars.DEPLOY_BRANCH || 'main' }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-
-
+          EC2_HOST:           ${{ secrets.EC2_HOST }}
+          EC2_USER:           ${{ vars.EC2_USER || 'ubuntu' }}
+          EC2_APP_DIR:        ${{ secrets.EC2_APP_DIR }}   # e.g. /home/ubuntu/apps/clinicalbert
+          APP_SUBDIR:         Assignments/Session2-23Aug2025/clinicalbert-api
+          BRANCH:             ${{ vars.DEPLOY_BRANCH || 'main' }}
+          GITHUB_REPOSITORY:  ${{ github.repository }}
+          ENTRY:              main:app                     # use app.main:app if your app is in app/main.py
         run: |
-          # Fail early on the runner if anything is missing
-          [ -n "${EC2_HOST:-}" ] || { echo "EC2_HOST missing"; exit 1; }
-          [ -n "${EC2_USER:-}" ] || { echo "EC2_USER missing"; exit 1; }
-          [ -n "${EC2_APP_DIR:-}" ] || { echo "EC2_APP_DIR missing"; exit 1; }
-          [ -n "${APP_SUBDIR:-}" ] || { echo "APP_SUBDIR missing"; exit 1; }
+          # Pass env to remote and run script
           ssh -o StrictHostKeyChecking=no "${EC2_USER}@${EC2_HOST}" \
-          "EC2_APP_DIR='${EC2_APP_DIR}' APP_SUBDIR='${APP_SUBDIR}' BRANCH='${BRANCH}' GITHUB_REPOSITORY='${GITHUB_REPOSITORY}' bash -s" <<'EOF'
+            "EC2_APP_DIR='${EC2_APP_DIR}' APP_SUBDIR='${APP_SUBDIR}' BRANCH='${BRANCH}' GITHUB_REPOSITORY='${GITHUB_REPOSITORY}' ENTRY='${ENTRY}' bash -s" <<'EOF'
           set -euxo pipefail
 
-
-
-
-          # --- Base packages (Ubuntu) ---
           sudo apt-get update -y
           sudo apt-get install -y python3-pip python3-venv git nginx
 
-          # --- App directory + code sync ---
-          mkdir -p ${EC2_APP_DIR}
-          cd ${EC2_APP_DIR}
+          mkdir -p "${EC2_APP_DIR}"
+          cd "${EC2_APP_DIR}"
 
           if [ -d .git ]; then
             git fetch --all
-            git reset --hard origin/${BRANCH}
+            git reset --hard "origin/${BRANCH}"
           else
             git init
-            git remote add origin https://github.com/${GITHUB_REPOSITORY}.git
-            git fetch origin ${BRANCH}
-            git checkout -b ${BRANCH} FETCH_HEAD
+            git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+            git fetch origin "${BRANCH}"
+            git checkout -b "${BRANCH}" FETCH_HEAD
           fi
 
-          # --- Python environment ---
-          python3 -m venv .venv
-          . .venv/bin/activate
-          pip install --upgrade pip wheel
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
-          elif [ -f pyproject.toml ]; then
-            pip install .
+          APP_PATH="${EC2_APP_DIR}/${APP_SUBDIR}"
+
+          # venv + deps
+          python3 -m venv "${APP_PATH}/.venv"
+          . "${APP_PATH}/.venv/bin/activate"
+          python -m pip install --upgrade pip wheel
+          if [ -f "${APP_PATH}/requirements.txt" ]; then
+            pip install -r "${APP_PATH}/requirements.txt"
+          else
+            pip install "${APP_PATH}"
           fi
 
-          # --- systemd service (runs uvicorn main:app on 127.0.0.1:8001) ---
-          sudo tee /etc/systemd/system/fastapi.service >/dev/null << UNIT
+          # systemd unit (service name: fastapi)
+          sudo tee /etc/systemd/system/fastapi.service >/dev/null <<UNIT
           [Unit]
-          Description=FastAPI (Uvicorn)
+          Description=FastAPI (Uvicorn) - clinicalbert-api
           After=network.target
 
           [Service]
           User=${USER}
-          WorkingDirectory=${EC2_APP_DIR}
-          Environment="PATH=${EC2_APP_DIR}/.venv/bin"
-          EnvironmentFile=-${EC2_APP_DIR}/.env
-          ExecStart=${EC2_APP_DIR}/.venv/bin/uvicorn main:app --host 127.0.0.1 --port 8001 --workers 2
+          WorkingDirectory=${APP_PATH}
+          Environment="PATH=${APP_PATH}/.venv/bin"
+          EnvironmentFile=-${APP_PATH}/.env
+          ExecStart=${APP_PATH}/.venv/bin/uvicorn ${ENTRY} --host 127.0.0.1 --port 8001 --workers 2
           Restart=always
           RestartSec=5
 
@@ -99,66 +90,37 @@ jobs:
           sudo systemctl enable fastapi || true
           sudo systemctl restart fastapi
 
-          # --- Nginx reverse proxy (HTTP only, no domain/TLS) ---
-          sudo tee /etc/nginx/sites-available/fastapi >/dev/null << 'NGINX'
+          # nginx site → proxy to localhost:8001
+          sudo tee /etc/nginx/sites-available/fastapi >/dev/null <<'NGINX'
           server {
-              listen 80;
-              server_name _;
-              
-              location /api/ {
-                  limit_req zone=api burst=20 nodelay;
-                  
-                  proxy_pass http://127.0.0.1:8001;
-                  proxy_set_header Host $host;
-                  proxy_set_header X-Real-IP $remote_addr;
-                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                  proxy_set_header X-Forwarded-Proto $scheme;
-                  
-                  # Timeouts
-                  proxy_connect_timeout 60s;
-                  proxy_send_timeout 60s;
-                  proxy_read_timeout 60s;
-              }
-
-              # Authentication endpoints
-              location /auth/ {
-                  limit_req zone=auth burst=10 nodelay;
-                  
-                  proxy_pass http://127.0.0.1:8001;
-                  proxy_set_header Host $host;
-                  proxy_set_header X-Real-IP $remote_addr;
-                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                  proxy_set_header X-Forwarded-Proto $scheme;
-              }
-
-              # Health check
-              location /health {
-                  proxy_pass http://127.0.0.1:8001;
-                  access_log off;
-              }
-
-              # Documentation
-              location /docs {
-                  proxy_pass http://127.0.0.1:8001;
-                  proxy_set_header Host $host;
-                  proxy_set_header X-Real-IP $remote_addr;
-                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-              }
-              
-
-
-              location / {
-                  proxy_pass http://127.0.0.1:8001;
-                  proxy_set_header Host $host;
-                  proxy_set_header X-Real-IP $remote_addr;
-                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                  proxy_set_header X-Forwarded-Proto $scheme;
-              }
+            listen 80;
+            server_name _;
+            location /                  { proxy_pass http://127.0.0.1:8001; proxy_set_header Host $host; proxy_set_header X-Real-IP $remote_addr; proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; proxy_set_header X-Forwarded-Proto $scheme; }
+            location /docs              { proxy_pass http://127.0.0.1:8001; }
+            location /openapi.json      { proxy_pass http://127.0.0.1:8001; }
+            location /health            { proxy_pass http://127.0.0.1:8001; access_log off; }
           }
           NGINX
           sudo ln -sf /etc/nginx/sites-available/fastapi /etc/nginx/sites-enabled/fastapi
-          sudo nginx -t && sudo systemctl restart nginx
+          sudo rm -f /etc/nginx/sites-enabled/default || true
+          sudo nginx -t
+          sudo systemctl restart nginx
 
-          # --- Basic cleanups/log hints ---
-          sudo systemctl status fastapi --no-pager || true
+          # quick local checks (don't fail job)
+          curl -fsS http://127.0.0.1:8001/openapi.json >/dev/null && echo "Uvicorn OK" || true
+          curl -fsS http://localhost/docs >/dev/null && echo "/docs OK via nginx" || true
           EOF
+      - name: Smoke test (external)
+        env:
+          URL: ${{ format('http://{0}/docs', secrets.EC2_HOST) }}
+        run: |
+          for i in {1..30}; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+            if [ "$code" -ge 200 ] && [ "$code" -lt 400 ]; then
+              echo "### Deployment OK" >> $GITHUB_STEP_SUMMARY
+              echo "- /docs reachable" >> $GITHUB_STEP_SUMMARY
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1      
