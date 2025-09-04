@@ -4,7 +4,8 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict, Any, List
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from fastapi import HTTPException, status, Request
+from fastapi import HTTPException, status, Request, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import httpx
 import logging
 import hashlib
@@ -34,6 +35,8 @@ SMART_SCOPES = {
     "profile": "User profile access",
     "fhirUser": "FHIR user identity"
 }
+
+security = HTTPBearer()
 
 class SMARTAuthenticator:
     """SMART on FHIR OAuth 2.0 authenticator"""
@@ -467,3 +470,53 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def get_password_hash(password: str) -> str:
     """Hash password"""
     return pwd_context.hash(password)
+
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+) -> Dict[str, Any]:
+    """
+    FastAPI dependency to get current authenticated user from JWT token
+    """
+    try:
+        # Extract token from Authorization header
+        token = credentials.credentials
+        
+        # Verify token and get user data
+        user_data = await verify_token(token)
+        
+        return user_data
+        
+    except HTTPException:
+        # Re-raise HTTP exceptions from verify_token
+        raise
+    except Exception as e:
+        logger.error(f"Error getting current user: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+async def get_current_user_with_scopes(
+    required_scopes: List[str]
+) -> callable:
+    """
+    Factory function to create a dependency that requires specific scopes
+    """
+    async def _get_current_user_with_scopes(
+        credentials: HTTPAuthorizationCredentials = Depends(security)
+    ) -> Dict[str, Any]:
+        try:
+            token = credentials.credentials
+            user_data = await verify_token(token, required_scopes=required_scopes)
+            return user_data
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Error validating user scopes: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Insufficient permissions"
+            )
+    
+    return _get_current_user_with_scopes
