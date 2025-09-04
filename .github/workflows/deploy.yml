@@ -58,14 +58,9 @@ jobs:
           APP_PATH="${EC2_APP_DIR}/${APP_SUBDIR}"
 
           # venv + deps
-          python3 -m venv "${APP_PATH}/.venv"
-          . "${APP_PATH}/.venv/bin/activate"
-          python -m pip install --upgrade pip wheel
-          if [ -f "${APP_PATH}/requirements.txt" ]; then
-            pip install -r "${APP_PATH}/requirements.txt"
-          else
-            pip install "${APP_PATH}"
-          fi
+           python3.10 -m venv "${APP_PATH}/.venv"
+          "${APP_PATH}/.venv/bin/python" -m pip install --upgrade pip setuptools wheel
+          "${APP_PATH}/.venv/bin/pip" install --no-cache-dir -r "${APP_PATH}/requirements.txt"
 
           # systemd unit (service name: fastapi)
           sudo tee /etc/systemd/system/fastapi.service >/dev/null <<UNIT
