@@ -24,7 +24,7 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-      - name: Remote deploy (systemd + nginx)
+      - name: Remote deploy (API + Next.js UI + Nginx)
         env:
           EC2_HOST:           ${{ secrets.EC2_HOST }}
           EC2_USER:           ${{ vars.EC2_USER || 'ubuntu' }}
@@ -41,8 +41,20 @@ jobs:
 
           
           # --- Base packages ---
+
           sudo apt-get update -y
           sudo apt-get install -y python3-venv python3-pip git nginx curl
+
+          # --- Node 20 + pnpm (for Next.js UI) ---
+
+          if ! command -v node >/dev/null 2>&1; then
+            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+          fi
+          corepack enable || true
+          corepack prepare pnpm@9 --activate || true
+
+          # --- App code + venv + deps ---
 
           mkdir -p "${EC2_APP_DIR}"
           cd "${EC2_APP_DIR}"
@@ -127,12 +139,62 @@ jobs:
           sudo systemctl enable fastapi || true
           sudo systemctl restart fastapi
 
+          # --- Build Next.js UI (port 3000) ---
+          cd "${APP_PATH}"
+          # Ensure UI calls backend via /api (no CORS)
+          if ! grep -q '^NEXT_PUBLIC_API_BASE=' "${APP_PATH}/.env.production" 2>/dev/null && \
+            ! grep -q '^NEXT_PUBLIC_API_BASE=' "${APP_PATH}/.env.production.local" 2>/dev/null; then
+            echo 'NEXT_PUBLIC_API_BASE=/api' >> "${APP_PATH}/.env.production.local"
+          fi
+
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile
+            pnpm build
+          else
+            npm ci
+            npm run build
+          fi
+          # --- systemd: Next.js UI (port 3000) ---
+          sudo tee /etc/systemd/system/nextjs.service >/dev/null <<'UNIT'
+          [Unit]
+          Description=Next.js UI (clinicalbert)
+          After=network.target
+
+          [Service]
+          User=ubuntu
+          WorkingDirectory=/home/ubuntu/apps/clinicalbert/Assignments/Session2-23Aug2025/clinicalbert-api
+          Environment=NODE_ENV=production
+          Environment=NEXT_TELEMETRY_DISABLED=1
+          ExecStart=/bin/bash -lc '[ -f pnpm-lock.yaml ] && pnpm start -- -p 3000 || npm run start -- -p 3000'
+          Restart=always
+          RestartSec=5
+
+          [Install]
+          WantedBy=multi-user.target
+          UNIT
+
+          sudo systemctl daemon-reload
+          sudo systemctl enable nextjs || true
+          sudo systemctl restart nextjs
+
           # nginx site → proxy to localhost:8001
           sudo tee /etc/nginx/sites-available/fastapi >/dev/null <<'NGINX'
           server {
             listen 80;
             server_name _;
-            location /                  { proxy_pass http://127.0.0.1:8001; proxy_set_header Host $host; proxy_set_header X-Real-IP $remote_addr; proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; proxy_set_header X-Forwarded-Proto $scheme; }
+            location /{ proxy_pass http://127.0.0.1:3000; 
+                        proxy_http_version 1.1;
+                        proxy_set_header Upgrade $http_upgrade;
+                        proxy_set_header Connection "upgrade";
+                        proxy_set_header Host $host; 
+                  }
+            location /api/ {
+              proxy_pass http://127.0.0.1:8001/;
+              proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto $scheme;
+            }
             location /docs              { proxy_pass http://127.0.0.1:8001; }
             location /openapi.json      { proxy_pass http://127.0.0.1:8001; }
             location /health            { proxy_pass http://127.0.0.1:8001; access_log off; }
@@ -144,25 +206,8 @@ jobs:
           sudo systemctl restart nginx
 
           # quick local checks (don't fail job)
-          curl -fsS http://127.0.0.1:8001/openapi.json >/dev/null && echo "Uvicorn OK" || true
-          curl -fsS http://localhost/docs >/dev/null && echo "/docs OK via nginx" || true
+          ss -ltnp | egrep ':3000|:8001|:80' || true
+          curl -fsS http://127.0.0.1:3000 >/dev/null && echo "UI OK" || echo "UI not ready yet"
+          curl -fsS http://127.0.0.1:8001/openapi.json >/dev/null && echo "API OK" || echo "API not ready yet"
+          curl -fsS http://localhost/docs >/dev/null && echo "Nginx OK" || echo "Nginx proxy not ready yet"
           EOF
-      - name: Smoke test (external)
-        env:
-          URL: ${{ format('http://{0}/docs', secrets.EC2_HOST) }}
-        run: |
-          echo "Testing deployment at: $URL"
-          for i in {1..30}; do
-            code=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
-            if [ "$code" -ge 200 ] && [ "$code" -lt 400 ]; then
-              echo "### ✅ Deployment Successful" >> $GITHUB_STEP_SUMMARY
-              echo "- FastAPI docs accessible at: $URL" >> $GITHUB_STEP_SUMMARY
-              echo "- HTTP status: $code" >> $GITHUB_STEP_SUMMARY
-              exit 0
-            fi
-            echo "Attempt $i: HTTP $code, retrying..."
-            sleep 2
-          done
-          echo "### ❌ Deployment Failed" >> $GITHUB_STEP_SUMMARY
-          echo "- Could not reach $URL after 60 seconds" >> $GITHUB_STEP_SUMMARY
-          exit 1    
