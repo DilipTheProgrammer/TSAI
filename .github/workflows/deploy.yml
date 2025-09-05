@@ -41,22 +41,28 @@ jobs:
 
           
           # --- Base packages ---
-        
 
-          # --- Node 20 + pnpm (for Next.js UI) ---
+          sudo apt-get install -y python3-venv python3-pip git nginx curl
+
+          # --- Node 20 (for Next.js UI) ---
 
           if ! command -v node >/dev/null 2>&1; then
             curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
             sudo apt-get install -y nodejs
           fi
-          sudo corepack enable || true
-          sudo corepack prepare pnpm@9 --activate || true
-          if ! command -v pnpm >/dev/null 2>&1; then
-            sudo npm i -g pnpm@9
-          fi
 
           # Quiet npm as a fallback
           npm config set fund false; npm config set audit false
+          rm -rf node_modules .next || true
+
+            # ensure UI calls API through nginx
+            [ -f .env.production.local ] || printf 'NEXT_PUBLIC_API_BASE=/api\n' > .env.production.local
+
+            export NODE_ENV=production
+            export NEXT_TELEMETRY_DISABLED=1
+            export NODE_OPTIONS="--max-old-space-size=384"   # keep memory low on small EC2
+
+           
 
           # --- App code + venv + deps ---
 
@@ -83,20 +89,7 @@ jobs:
           echo "Using requirements at: $REQ"
           
 
-          echo "=== Fixing Next.js dependencies ==="
-          if [ -f "pnpm-lock.yaml" ] && [ -f "package.json" ]; then
-            echo "Regenerating pnpm lockfile to fix version mismatch..."
-            rm -f pnpm-lock.yaml
-            pnpm install --no-frozen-lockfile
-          elif [ -f "package.json" ]; then
-            echo "Installing Next.js dependencies..."
-            pnpm install --no-frozen-lockfile
-          fi
           
-          echo "=== Building Next.js frontend ==="
-          if [ -f "package.json" ]; then
-            pnpm build
-          fi
 
           # venv + deps
           python3 -m venv "${APP_PATH}/.venv"
@@ -161,22 +154,8 @@ jobs:
 
           # --- Build Next.js UI (port 3000) ---
           cd "${APP_PATH}"
-          # Ensure UI calls backend via /api (no CORS)
-          if ! grep -q '^NEXT_PUBLIC_API_BASE=' "${APP_PATH}/.env.production" 2>/dev/null && \
-            ! grep -q '^NEXT_PUBLIC_API_BASE=' "${APP_PATH}/.env.production.local" 2>/dev/null; then
-            echo 'NEXT_PUBLIC_API_BASE=/api' >> "${APP_PATH}/.env.production.local"
-          fi
-
-          if [ -f pnpm-lock.yaml ]; then
-            # quieter, less chattiness, and retry once
-            (pnpm install --no-frozen-lockfile --reporter=silent --network-concurrency=8) || \
-            (sleep 5; pnpm install --no-frozen-lockfile --reporter=silent --network-concurrency=6)
-            PNPM_SILENT=1 pnpm build
-          else
-            # npm fallback
-            if [ -f package-lock.json ]; then npm ci --quiet; else npm install --quiet --no-audit --no-fund; fi
-            NODE_OPTIONS="--max-old-space-size=512" npm run --silent build
-          fi
+          npm install
+          npm run build
           # --- systemd: Next.js UI (port 3000) ---
           sudo tee /etc/systemd/system/nextjs.service >/dev/null <<'UNIT'
           [Unit]
@@ -188,7 +167,8 @@ jobs:
           WorkingDirectory=/home/ubuntu/apps/clinicalbert/Assignments/Session2-23Aug2025/clinicalbert-api
           Environment=NODE_ENV=production
           Environment=NEXT_TELEMETRY_DISABLED=1
-          ExecStart=/bin/bash -lc '[ -f pnpm-lock.yaml ] && pnpm start -- -p 3000 || npm run start -- -p 3000'
+          Environment=PORT=3000
+          ExecStart=bin/bash -lc 'npm run start -- -p 3000'
           Restart=always
           RestartSec=5
 
