@@ -51,8 +51,8 @@ jobs:
             curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
             sudo apt-get install -y nodejs
           fi
-          corepack enable || true
-          corepack prepare pnpm@9 --activate || true
+          sudo corepack enable || true
+          sudo corepack prepare pnpm@9 --activate || true
           if ! command -v pnpm >/dev/null 2>&1; then
             sudo npm i -g pnpm@9
           fi
@@ -166,10 +166,10 @@ jobs:
           fi
 
           if [ -f pnpm-lock.yaml ]; then
-            pnpm install --frozen-lockfile
+            pnpm install --no-frozen-lockfile
             pnpm build
           else
-            npm ci
+            if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
             npm run build
           fi
           # --- systemd: Next.js UI (port 3000) ---
