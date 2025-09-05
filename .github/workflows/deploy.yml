@@ -57,6 +57,9 @@ jobs:
             sudo npm i -g pnpm@9
           fi
 
+          # Quiet npm as a fallback
+          npm config set fund false; npm config set audit false
+
           # --- App code + venv + deps ---
 
           mkdir -p "${EC2_APP_DIR}"
@@ -166,11 +169,14 @@ jobs:
           fi
 
           if [ -f pnpm-lock.yaml ]; then
-            pnpm install --no-frozen-lockfile
-            pnpm build
+            # quieter, less chattiness, and retry once
+            (pnpm install --no-frozen-lockfile --reporter=silent --network-concurrency=8) || \
+            (sleep 5; pnpm install --no-frozen-lockfile --reporter=silent --network-concurrency=6)
+            PNPM_SILENT=1 pnpm build
           else
-            if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
-            npm run build
+            # npm fallback
+            if [ -f package-lock.json ]; then npm ci --quiet; else npm install --quiet --no-audit --no-fund; fi
+            NODE_OPTIONS="--max-old-space-size=512" npm run --silent build
           fi
           # --- systemd: Next.js UI (port 3000) ---
           sudo tee /etc/systemd/system/nextjs.service >/dev/null <<'UNIT'
