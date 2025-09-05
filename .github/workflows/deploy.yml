@@ -53,6 +53,9 @@ jobs:
           fi
           corepack enable || true
           corepack prepare pnpm@9 --activate || true
+          if ! command -v pnpm >/dev/null 2>&1; then
+            sudo npm i -g pnpm@9
+          fi
 
           # --- App code + venv + deps ---
 
