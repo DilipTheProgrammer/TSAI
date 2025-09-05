@@ -81,6 +81,21 @@ jobs:
           fi
           echo "Using requirements at: $REQ"
 
+          echo "=== Fixing Next.js dependencies ==="
+          if [ -f "pnpm-lock.yaml" ] && [ -f "package.json" ]; then
+            echo "Regenerating pnpm lockfile to fix version mismatch..."
+            rm -f pnpm-lock.yaml
+            pnpm install --no-frozen-lockfile
+          elif [ -f "package.json" ]; then
+            echo "Installing Next.js dependencies..."
+            pnpm install --no-frozen-lockfile
+          fi
+          
+          echo "=== Building Next.js frontend ==="
+          if [ -f "package.json" ]; then
+            pnpm build
+          fi
+
           # venv + deps
           python3 -m venv "${APP_PATH}/.venv"
           "${APP_PATH}/.venv/bin/python" -m pip install --upgrade pip setuptools wheel
