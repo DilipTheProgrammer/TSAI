@@ -35,9 +35,11 @@ jobs:
           ENTRY:              main:app                     # use app.main:app if your app is in app/main.py
         run: |
           # Pass env to remote and run script
-           ssh -o StrictHostKeyChecking=no \
-              -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o TCPKeepAlive=yes \ "${EC2_USER}@${EC2_HOST}" \
-              "EC2_APP_DIR='${EC2_APP_DIR}' APP_SUBDIR='${APP_SUBDIR}' BRANCH='${BRANCH}' GITHUB_REPOSITORY='${GITHUB_REPOSITORY}' ENTRY='${ENTRY}' bash -s" <<'EOF'
+           ssh -i ~/.ssh/ec2_key -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=no \
+            -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o TCPKeepAlive=yes \
+            "${EC2_USER}@${EC2_HOST}" \
+            "EC2_APP_DIR='${EC2_APP_DIR}' APP_SUBDIR='${APP_SUBDIR}' BRANCH='${BRANCH}' GITHUB_REPOSITORY='${GITHUB_REPOSITORY}' ENTRY='${ENTRY}' bash -s" <<'EOF'
           set -euxo pipefail
 
           
