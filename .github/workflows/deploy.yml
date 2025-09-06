@@ -174,6 +174,13 @@ jobs:
           # --- Build Next.js UI (port 3000) ---
           cd "${APP_PATH}"
           # --- ensure Tailwind v4 PostCSS plugin is present ---
+          rm -rf .next
+          if [ -f package-lock.json ]; then
+            npm ci --legacy-peer-deps --no-audit --no-fund
+          else
+            npm install --legacy-peer-deps --no-audit --no-fund
+          fi
+          # --- ensure Tailwind v4 PostCSS plugin is present ---
           if node -e "require.resolve('@tailwindcss/postcss')" >/dev/null 2>&1; then
             echo "✔ @tailwindcss/postcss already installed"
           else
@@ -190,12 +197,6 @@ jobs:
           import autoprefixer from 'autoprefixer'
           export default { plugins: [tailwind(), autoprefixer()] }
           CFG
-          fi
-          rm -rf .next node_modules || true
-          if [ -f package-lock.json ]; then
-            npm ci --legacy-peer-deps --no-audit --no-fund
-          else
-            npm install --legacy-peer-deps --no-audit --no-fund
           fi
           npm run build
           # --- systemd: Next.js UI (port 3000) ---
