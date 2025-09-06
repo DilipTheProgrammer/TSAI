@@ -24,6 +24,21 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+      - name: Setup SSH key
+        shell: bash
+        env:
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+        run: |
+          set -euo pipefail
+          install -m 700 -d ~/.ssh
+          # write the multi-line PEM; strip CRLF if pasted from Windows
+          printf '%s\n' "$EC2_SSH_KEY" | tr -d '\r' > ~/.ssh/ec2_key
+          chmod 600 ~/.ssh/ec2_key
+          # trust the host to avoid interactive prompt
+          ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
+          # quick sanity check (won’t expose key material)
+          [ -s ~/.ssh/ec2_key ] && ssh-keygen -lf ~/.ssh/ec2_key || { echo "Key missing/empty"; exit 1; }
       - name: Remote deploy (API + Next.js UI + Nginx)
         env:
           EC2_HOST:           ${{ secrets.EC2_HOST }}
