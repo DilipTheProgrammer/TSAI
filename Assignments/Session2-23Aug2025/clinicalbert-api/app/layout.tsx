@@ -31,7 +31,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans ${dmSans.variable} ${spaceGrotesk.variable} ${GeistMono.variable}`}>{children}</body>
+      <body className={`font-sans antialiased ${dmSans.variable} ${spaceGrotesk.variable} ${GeistMono.variable}`}>
+        {children}
+      </body>
     </html>
   )
 }
