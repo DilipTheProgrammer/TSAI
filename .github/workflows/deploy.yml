@@ -174,7 +174,15 @@ jobs:
           cd "${APP_PATH}"
           # --- ensure Tailwind v4 PostCSS plugin is present ---
           rm -rf .next || true
-          npm ci --legacy-peer-deps --no-audit --no-fund
+          # install (see lockfile logic above)
+          if [ -f package-lock.json ]; then
+            npm ci --no-audit --no-fund --legacy-peer-deps
+          else
+            npm install --no-audit --no-fund --legacy-peer-deps
+          fi
+          
+          # sanity check the plugin is present (optional but helpful)
+          node -e "console.log(require.resolve('@tailwindcss/postcss'))"
           npm run build
           # --- systemd: Next.js UI (port 3000) ---
           sudo tee /etc/systemd/system/nextjs.service >/dev/null <<'UNIT'
