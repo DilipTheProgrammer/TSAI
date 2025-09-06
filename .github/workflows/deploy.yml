@@ -3,6 +3,8 @@ name: Deploy FastAPI to EC2 (systemd, no TLS)
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'Assignments/Session2-23Aug2025/clinicalbert-api/**'
   workflow_dispatch:
 
 jobs:
@@ -48,7 +50,8 @@ jobs:
           ENTRY:              main:app                     # use app.main:app if your app is in app/main.py
         run: |
           # Pass env to remote and run script
-           ssh -i ~/.ssh/ec2_key -o IdentitiesOnly=yes \
+         
+          ssh -i ~/.ssh/ec2_key -o IdentitiesOnly=yes \
             -o StrictHostKeyChecking=no \
             -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o TCPKeepAlive=yes \
             "${EC2_USER}@${EC2_HOST}" \
@@ -170,6 +173,24 @@ jobs:
 
           # --- Build Next.js UI (port 3000) ---
           cd "${APP_PATH}"
+          # --- ensure Tailwind v4 PostCSS plugin is present ---
+          if node -e "require.resolve('@tailwindcss/postcss')" >/dev/null 2>&1; then
+            echo "✔ @tailwindcss/postcss already installed"
+          else
+            echo "→ Installing @tailwindcss/postcss + postcss + autoprefixer…"
+            npm install --no-audit --no-fund --legacy-peer-deps \
+              -D @tailwindcss/postcss@^4.1.9 postcss@^8 autoprefixer@latest
+          fi
+
+          # --- make sure PostCSS config points to the v4 plugin (idempotent) ---
+          if [ -f postcss.config.mjs ] && ! grep -q "@tailwindcss/postcss" postcss.config.mjs; then
+            echo "→ Updating postcss.config.mjs to use @tailwindcss/postcss"
+            cat > postcss.config.mjs <<'CFG'
+          import tailwind from '@tailwindcss/postcss'
+          import autoprefixer from 'autoprefixer'
+          export default { plugins: [tailwind(), autoprefixer()] }
+          CFG
+          fi
           rm -rf .next node_modules || true
           if [ -f package-lock.json ]; then
             npm ci --legacy-peer-deps --no-audit --no-fund
