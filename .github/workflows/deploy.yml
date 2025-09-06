@@ -72,7 +72,6 @@ jobs:
 
           # Quiet npm as a fallback
           npm config set fund false; npm config set audit false
-          rm -rf node_modules .next || true
 
             # ensure UI calls API through nginx
             [ -f .env.production.local ] || printf 'NEXT_PUBLIC_API_BASE=/api\n' > .env.production.local
@@ -174,30 +173,8 @@ jobs:
           # --- Build Next.js UI (port 3000) ---
           cd "${APP_PATH}"
           # --- ensure Tailwind v4 PostCSS plugin is present ---
-          rm -rf .next
-          if [ -f package-lock.json ]; then
-            npm ci --legacy-peer-deps --no-audit --no-fund
-          else
-            npm install --legacy-peer-deps --no-audit --no-fund
-          fi
-          # --- ensure Tailwind v4 PostCSS plugin is present ---
-          if node -e "require.resolve('@tailwindcss/postcss')" >/dev/null 2>&1; then
-            echo "✔ @tailwindcss/postcss already installed"
-          else
-            echo "→ Installing @tailwindcss/postcss + postcss + autoprefixer…"
-            npm install --no-audit --no-fund --legacy-peer-deps \
-              -D @tailwindcss/postcss@^4.1.9 postcss@^8 autoprefixer@latest
-          fi
-
-          # --- make sure PostCSS config points to the v4 plugin (idempotent) ---
-          if [ -f postcss.config.mjs ] && ! grep -q "@tailwindcss/postcss" postcss.config.mjs; then
-            echo "→ Updating postcss.config.mjs to use @tailwindcss/postcss"
-            cat > postcss.config.mjs <<'CFG'
-          import tailwind from '@tailwindcss/postcss'
-          import autoprefixer from 'autoprefixer'
-          export default { plugins: [tailwind(), autoprefixer()] }
-          CFG
-          fi
+          rm -rf .next || true
+          npm ci --legacy-peer-deps --no-audit --no-fund
           npm run build
           # --- systemd: Next.js UI (port 3000) ---
           sudo tee /etc/systemd/system/nextjs.service >/dev/null <<'UNIT'
