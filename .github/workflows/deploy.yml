@@ -3,8 +3,6 @@ name: Deploy FastAPI to EC2 (systemd, no TLS)
 on:
   push:
     branches: [ "main" ]
-    paths:
-      - 'Assignments/Session2-23Aug2025/clinicalbert-api/**'
   workflow_dispatch:
 
 jobs:
@@ -172,7 +170,12 @@ jobs:
 
           # --- Build Next.js UI (port 3000) ---
           cd "${APP_PATH}"
-          npm install
+          rm -rf .next node_modules || true
+          if [ -f package-lock.json ]; then
+            npm ci --legacy-peer-deps --no-audit --no-fund
+          else
+            npm install --legacy-peer-deps --no-audit --no-fund
+          fi
           npm run build
           # --- systemd: Next.js UI (port 3000) ---
           sudo tee /etc/systemd/system/nextjs.service >/dev/null <<'UNIT'
