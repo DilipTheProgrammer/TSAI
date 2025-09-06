@@ -105,11 +105,12 @@ jobs:
           else
             npm install --no-audit --no-fund --legacy-peer-deps
           fi
-          npm run build
+          
 
           export NODE_ENV=production
           export NEXT_TELEMETRY_DISABLED=1
           export NODE_OPTIONS="--max-old-space-size=384"   # keep memory low on small EC2
+          npm run build
           REQ="${APP_PATH}/requirements.txt"
           if [ ! -f "$REQ" ]; then
             echo "requirements.txt not found at: $REQ"
