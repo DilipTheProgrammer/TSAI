@@ -73,21 +73,7 @@ jobs:
           # Quiet npm as a fallback
           npm config set fund false; npm config set audit false
 
-            # ensure UI calls API through nginx
-            [ -f .env.production.local ] || printf 'NEXT_PUBLIC_API_BASE=/api\n' > .env.production.local
-            rm -rf .next || true
-            npm install next
-            # install (see lockfile logic above)
-            if [ -f package-lock.json ]; then
-              npm ci --no-audit --no-fund --legacy-peer-deps
-            else
-              npm install --no-audit --no-fund --legacy-peer-deps
-            fi
-            npm run build
-
-            export NODE_ENV=production
-            export NEXT_TELEMETRY_DISABLED=1
-            export NODE_OPTIONS="--max-old-space-size=384"   # keep memory low on small EC2
+          
 
            
 
@@ -95,6 +81,7 @@ jobs:
 
           mkdir -p "${EC2_APP_DIR}"
           cd "${EC2_APP_DIR}"
+          
 
           if [ -d .git ]; then
             git fetch --all
@@ -107,6 +94,22 @@ jobs:
           fi
 
           APP_PATH="${EC2_APP_DIR}/${APP_SUBDIR}"
+          cd "${APP_PATH}"
+          # ensure UI calls API through nginx
+          [ -f .env.production.local ] || printf 'NEXT_PUBLIC_API_BASE=/api\n' > .env.production.local
+          rm -rf .next || true
+          npm install next
+          # install (see lockfile logic above)
+          if [ -f package-lock.json ]; then
+            npm ci --no-audit --no-fund --legacy-peer-deps
+          else
+            npm install --no-audit --no-fund --legacy-peer-deps
+          fi
+          npm run build
+
+          export NODE_ENV=production
+          export NEXT_TELEMETRY_DISABLED=1
+          export NODE_OPTIONS="--max-old-space-size=384"   # keep memory low on small EC2
           REQ="${APP_PATH}/requirements.txt"
           if [ ! -f "$REQ" ]; then
             echo "requirements.txt not found at: $REQ"
