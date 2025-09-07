@@ -96,7 +96,18 @@ jobs:
           APP_PATH="${EC2_APP_DIR}/${APP_SUBDIR}"
           cd "${APP_PATH}"
           # ensure UI calls API through nginx
+          sudo fallocate -l 4G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+
+          # Make it permanent (so it survives reboots)
+          echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+
+          # Confirm it’s active
+          free -h
           [ -f .env.production.local ] || printf 'NEXT_PUBLIC_API_BASE=/api\n' > .env.production.local
+
           rm -rf .next || true
           npm install next
           # install (see lockfile logic above)
@@ -106,16 +117,14 @@ jobs:
             npm install --no-audit --no-fund --legacy-peer-deps
           fi
           
-
+          unset NODE_OPTIONS
           export NODE_ENV=production
           export NEXT_TELEMETRY_DISABLED=1
-          export NODE_OPTIONS="--max-old-space-size=384"
+          export NODE_OPTIONS="--max-old-space-size=1024"
           export SWC_THREADS=1
           export TURBO_MAX_THREADS=1
           export NEXT_DISABLE_SOURCEMAP=1 # keep memory low on small EC2
 
-          sudo swapoff -a || true
-          sudo swapon -a || true
           npm run build
           REQ="${APP_PATH}/requirements.txt"
           if [ ! -f "$REQ" ]; then
@@ -201,7 +210,7 @@ jobs:
 
           [Service]
           User=ubuntu
-          WorkingDirectory=/home/ubuntu/apps/clinicalbert/Assignments/Session2-23Aug2025/clinicalbert-api
+          WorkingDirectory=${APP_PATH}
           Environment=NODE_ENV=production
           Environment=NEXT_TELEMETRY_DISABLED=1
           Environment=PORT=3000
