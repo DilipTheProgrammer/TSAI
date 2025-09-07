@@ -210,7 +210,7 @@ jobs:
 
           [Service]
           User=ubuntu
-          WorkingDirectory=${APP_PATH}
+          WorkingDirectory=/home/ubuntu/apps/clinicalbert/Assignments/Session2-23Aug2025/clinicalbert-api
           Environment=NODE_ENV=production
           Environment=NEXT_TELEMETRY_DISABLED=1
           Environment=PORT=3000
