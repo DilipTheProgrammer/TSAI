@@ -96,10 +96,18 @@ jobs:
           APP_PATH="${EC2_APP_DIR}/${APP_SUBDIR}"
           cd "${APP_PATH}"
           # ensure UI calls API through nginx
-          sudo fallocate -l 4G /swapfile
-          sudo chmod 600 /swapfile
-          sudo mkswap /swapfile
-          sudo swapon /swapfile
+          if ! swapon --show | grep -q '^/swapfile'; then
+            # create only if not active
+            if [ ! -f /swapfile ]; then
+              sudo fallocate -l 4G /swapfile 2>/dev/null || sudo dd if=/dev/zero of=/swapfile bs=1M count=4096 status=progress
+              sudo chmod 600 /swapfile
+              sudo mkswap /swapfile
+              echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab >/dev/null
+            fi
+            sudo swapon /swapfile
+          else
+            echo "Swap already active; skipping creation."
+          fi
 
           # Make it permanent (so it survives reboots)
           echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
