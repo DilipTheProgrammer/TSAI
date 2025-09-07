@@ -113,6 +113,9 @@ jobs:
           export SWC_THREADS=1
           export TURBO_MAX_THREADS=1
           export NEXT_DISABLE_SOURCEMAP=1 # keep memory low on small EC2
+
+          sudo swapoff -a || true
+          sudo swapon -a || true
           npm run build
           REQ="${APP_PATH}/requirements.txt"
           if [ ! -f "$REQ" ]; then
