@@ -1,6 +1,6 @@
 # ClinicalBERT FastAPI Service
 
-A production-ready FastAPI service that integrates ClinicalBERT for processing clinical notes and delivering predictive insights, compatible with HL7 FHIR standards.
+A TOY FastAPI service that integrates ClinicalBERT for processing clinical notes and delivering predictive insights, compatible with HL7 FHIR standards.
 
 ## Features
 
