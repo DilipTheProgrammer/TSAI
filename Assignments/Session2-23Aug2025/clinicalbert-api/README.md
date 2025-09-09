@@ -2,6 +2,51 @@
 
 A TOY FastAPI service that integrates ClinicalBERT for processing clinical notes and delivering predictive insights, compatible with HL7 FHIR standards.
 
+## 🧠 ClinicalBERT
+
+This project utilizes **ClinicalBERT**, a domain-specific language model based on BERT that has been further pretrained on clinical notes from the **MIMIC-III** database. Unlike general-purpose BERT models, ClinicalBERT is tailored for the healthcare domain. It understands medical terminology, clinical abbreviations, and contextual nuances present in clinical texts.
+
+ClinicalBERT enhances performance on a variety of clinical natural language processing (NLP) tasks. 
+
+### 🔍 Use Cases in This Application
+
+ClinicalBERT powers several key features of this application:
+
+- **`POST /api/v1/predict_readmission`**  
+  Predicts the likelihood of a **30-day hospital readmission** based on patient notes and clinical context.
+  
+- **`POST /api/v1/risk_trajectory`**  
+  Performs **dynamic risk assessment** throughout a patient's hospital stay by analyzing evolving clinical documentation.
+  
+- **`POST /api/v1/extract_entities`**  
+  Extracts **clinical entities** such as conditions, medications, and procedures from unstructured text.
+  
+- **`POST /api/v1/search_cases`**  
+  Enables **semantic search** to retrieve **similar patient cases**, aiding in clinical decision support and comparative analysis.
+  
+- **`POST /api/v1/cohort_identification`**  
+  Supports **patient cohort identification** based on clinical features, useful for retrospective studies or patient stratification.
+
+These functionalities benefit from ClinicalBERT's ability to model context-rich, domain-specific language that appears in electronic health records (EHRs) and other medical texts.
+
+By integrating ClinicalBERT, this application benefits from improved contextual understanding in medical and clinical data processing.
+
+---
+
+### 📄 Citation
+
+If you use ClinicalBERT in your work, please cite:
+
+> Emily Alsentzer, John Murphy, William Boag, Wei-Hung Weng, Di Jindi, Tristan Naumann, and Matthew McDermott.  
+> *Publicly Available Clinical BERT Embeddings*.  
+> arXiv:1904.03323 [cs.CL], 2019.  
+> [https://arxiv.org/abs/1904.03323](https://arxiv.org/abs/1904.03323)
+
+---
+
+For more details or to access pretrained models, visit the [original p]()
+
+
 ## Features
 
 - 🏥 **FHIR R4 Compliance**: Full support for HL7 FHIR R4 resources
