@@ -182,8 +182,14 @@ jobs:
               exit 1
             fi
           fi
-
+          
           # systemd unit (service name: fastapi)
+          sudo tee /etc/nginx/conf.d/websocket_upgrade_map.conf >/dev/null <<'CONF'
+          map $http_upgrade $connection_upgrade {
+              default upgrade;
+              ''      close;
+          }
+          CONF
           sudo tee /etc/systemd/system/fastapi.service >/dev/null <<UNIT
           [Unit]
           Description=FastAPI (Uvicorn) - clinicalbert-api
